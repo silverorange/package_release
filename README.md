@@ -8,11 +8,11 @@ Usage:
 
 Options:
   -b branch, --branch=branch     Remote branch to use for release. If not
-                                 specified, 'master' is used.
+                                 specified, "master" is used.
   -m message, --message=message  Message to use for the release tag.
-  -t type, --type=type           Release type. Must be one of 'major',
-                                 'minor', or 'micro'. If not specified,
-                                 'minor' is used.
+  -t type, --type=type           Release type. Must be one of "major",
+                                 "minor", or "micro". If not specified,
+                                 "minor" is used.
   -v, --verbose                  Sets verbosity level. Use multiples for
                                  more detail (e.g. "-vv").
   -h, --help                     show this help message and exit
