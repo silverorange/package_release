@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<command>
+	<description>Command-line tool to release new versions of composer modules.</description>
+	<version>0.1.0</version>
+	<option name="branch">
+		<short_name>-b</short_name>
+		<long_name>--branch</long_name>
+		<default>master</default>
+		<description>Remote branch to use for release. If not specified, 'master' is used.</description>
+		<action>StoreString</action>
+	</option>
+	<option name="message">
+		<short_name>-m</short_name>
+		<long_name>--message</long_name>
+		<description>Message to use for the release tag.</description>
+		<action>StoreString</action>
+	</option>
+	<option name="type">
+		<short_name>-t</short_name>
+		<long_name>--type</long_name>
+		<choices>
+			<choice>major</choice>
+			<choice>minor</choice>
+			<choice>micro</choice>
+		</choices>
+		<default>minor</default>
+		<description>Release type. Must be one of 'major', 'minor', or 'micro'. If not specified, 'minor' is used.</description>
+		<action>StoreString</action>
+	</option>
+	<option name="verbose">
+		<short_name>-v</short_name>
+		<long_name>--verbose</long_name>
+		<description>Sets verbosity level. Use multiples for more detail (e.g. "-vv").</description>
+		<action>Counter</action>
+	</option>
+</command>
