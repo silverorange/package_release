@@ -8,7 +8,6 @@ namespace silverorange\ModuleRelease;
  * @package   ModuleRelease
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2016 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class Manager
