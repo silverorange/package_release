@@ -300,14 +300,14 @@ class Manager
 		} else {
 			switch ($type) {
 			case self::VERSION_MAJOR:
-				$next = ($parts[0] + 1) . '.' . $parts[1] . '.' . $parts[2];
+				$next = ($parts[0] + 1) . '.0.0';
 				break;
 			case self::VERSION_MICRO:
 				$next = $parts[0] . '.' . $parts[1] . '.' . ($parts[2] + 1);
 				break;
 			case self::VERSION_MINOR:
 			default:
-				$next = $parts[0] . '.' . ($parts[1] + 1) . '.' . $parts[2];
+				$next = $parts[0] . '.' . ($parts[1] + 1) . '.0';
 				break;
 			}
 		}
