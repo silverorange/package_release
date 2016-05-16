@@ -23,9 +23,9 @@ class Manager
 	 * @return boolean true if the current directory is a git repository,
 	 *                 otherwise false.
 	 */
-	public function inGitRepo()
+	public function isInGitRepo()
 	{
-		$package_git_repo = `git rev-parse --is-inside-work-tree`;
+		$package_git_repo = `git rev-parse --is-inside-work-tree 2>/dev/null`;
 		return (trim($package_git_repo) === 'true');
 	}
 
@@ -108,6 +108,44 @@ class Manager
 	}
 
 	/**
+	 * Creates a release branch based on a remote branch name
+	 *
+	 * @param string $parent  the parent branch name.
+	 * @param string $remote  the remote repository name.
+	 * @param string $version the release version.
+	 *
+	 * @return string the name of the new branch, or null if the branch could
+	 *                not be created.
+	 */
+	public function createReleaseBranch($parent, $remote, $version)
+	{
+		$release = 'release-' . str_replace('.', '-', $version);
+
+		$escaped_remote = escapeshellarg($remote);
+		$escaped_parent = escapeshellarg($parent);
+		$escaped_release = escapeshellarg($release);
+
+		`git fetch $escaped_remote $escaped_parent`;
+
+		$command = sprintf(
+			'git checkout -b %s %s/%s',
+			$escaped_release,
+			$escaped_remote,
+			$escaped_parent
+		);
+
+		$output = array();
+		$return = 0;
+		exec($command, $output, $return);
+
+		if ($return !== 0) {
+			$release = null;
+		}
+
+		return $release;
+	}
+
+	/**
 	 * Gets the most recent version tag from the specified remote
 	 *
 	 * @param string $remote the name of the remote.
@@ -174,9 +212,10 @@ class Manager
 	 *
 	 * @return string the next release version.
 	 */
-	public function getNextVerison($current_version,
-		$type = self::VERSION_MINOR)
-	{
+	public function getNextVersion(
+		$current_version,
+		$type = self::VERSION_MINOR
+	) {
 		$parts = explode('.', $current_version);
 
 		if (count($parts) !== 3) {
@@ -184,14 +223,14 @@ class Manager
 		} else {
 			switch ($type) {
 			case self::VERSION_MAJOR:
-				$next = $parts[0] + 1 . '.' . $parts[1] . '.' . $parts[2];
+				$next = ($parts[0] + 1) . '.' . $parts[1] . '.' . $parts[2];
 				break;
 			case self::VERSION_MICRO:
-				$next = $parts[0] . '.' . $parts[1] . '.' . $parts[2] + 1;
+				$next = $parts[0] . '.' . $parts[1] . '.' . ($parts[2] + 1);
 				break;
 			case self::VERSION_MINOR:
 			default:
-				$next = $parts[0] . '.' . $parts[1] + 1 . '.' . $parts[2];
+				$next = $parts[0] . '.' . ($parts[1] + 1) . '.' . $parts[2];
 				break;
 			}
 		}

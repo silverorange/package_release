@@ -66,25 +66,82 @@ class CLI implements Log\LoggerAwareInterface
 
 	public function run()
 	{
-		if (!$this->manager->isInGitRepo()) {
-			$this->logger->error(
-				'This tool must be run from a git repository.' . PHP_EOL
-			);
-			exit(1);
-		}
-
-		if (!$this->manager->isComposerModule()) {
-			$this->logger->error(
-				'Could not find “composer.json”. Make sure you are in the '.
-				'project root and the project is a composer module.' . PHP_EOL
-			);
-			exit(1);
-		}
-
-		$repo_name = $this->manager->getRepoName();
 
 		try {
 			$result = $this->parser->parse();
+
+			if (!$this->manager->isInGitRepo()) {
+				$this->logger->error(
+					'This tool must be run from a git repository.' . PHP_EOL
+				);
+				exit(1);
+			}
+
+			if (!$this->manager->isComposerModule()) {
+				$this->logger->error(
+					'Could not find "composer.json". Make sure you are in '
+					. 'the project root and the project is a composer module.'
+					. PHP_EOL
+				);
+				exit(1);
+			}
+
+			$repo_name = $this->manager->getRepoName();
+			if ($repo_name === null) {
+				$this->logger->error(
+					'Could not find get git repository name. Git repository '
+					. 'must have a remote named "origin".' . PHP_EOL
+				);
+				exit(1);
+			}
+
+			$remote_url = sprintf(
+				'git@github.com:silverorange/%s.git',
+				$repo_name
+			);
+			$remote = $this->manager->getRemoteByUrl($remote_url);
+			if ($remote === null) {
+				$this->logger->error(
+					'Could not find silverorange remote. A remote with the '
+					. 'URL "{remote}" must exist.' . PHP_EOL,
+					array(
+						'remote' => $remote_url,
+					)
+				);
+				exit(1);
+			}
+
+			$current_version = $this->manager->getCurrentVersionFromRemote(
+				$remote
+			);
+
+			$next_version = $this->manager->getNextVersion(
+				$current_version,
+				$result->options['type']
+			);
+
+			$branch = $result->options['branch'];
+			$release_branch = $this->manager->createReleaseBranch(
+				$branch,
+				$remote,
+				$next_version
+			);
+			if ($release_branch === null) {
+				$this->logger->error(
+					'Could not create release branch from "{branch}". A branch '
+					. 'with the same name may already exist.' . PHP_EOL,
+					array(
+						'branch' => $branch,
+					)
+				);
+				exit(1);
+			}
+
+			var_dump($current_version);
+			var_dump($next_version);
+			var_dump($repo_name);
+			var_dump($remote_url);
+			var_dump($remote);
 
 // 3. get new release version from remote
 // 4. create release branch `release-foo` from remote branch

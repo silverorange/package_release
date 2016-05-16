@@ -6,7 +6,7 @@
 		<short_name>-b</short_name>
 		<long_name>--branch</long_name>
 		<default>master</default>
-		<description>Remote branch to use for release. If not specified, 'master' is used.</description>
+		<description>Remote branch to use for release. If not specified, "master" is used.</description>
 		<action>StoreString</action>
 	</option>
 	<option name="message">
@@ -24,7 +24,7 @@
 			<choice>micro</choice>
 		</choices>
 		<default>minor</default>
-		<description>Release type. Must be one of 'major', 'minor', or 'micro'. If not specified, 'minor' is used.</description>
+		<description>Release type. Must be one of "major", "minor", or "micro". If not specified, "minor" is used.</description>
 		<action>StoreString</action>
 	</option>
 	<option name="verbose">
