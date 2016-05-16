@@ -4,13 +4,17 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 use silverorange\ModuleRelease;
 
+$handler = new StreamHandler('php://stdout', Logger::INFO);
+$handler->setFormatter(new LineFormatter('%message%' . PHP_EOL));
+
 $logger = new Logger('module-release-cli');
-$logger->pushHandler(new StreamHandler('php://stdout', Logger::INFO));
 $logger->pushProcessor(new PsrLogMessageProcessor());
+$logger->pushHandler($handler);
 
 $manager = new ModuleRelease\Manager();
 

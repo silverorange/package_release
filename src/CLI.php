@@ -72,7 +72,7 @@ class CLI implements Log\LoggerAwareInterface
 
 			if (!$this->manager->isInGitRepo()) {
 				$this->logger->error(
-					'This tool must be run from a git repository.' . PHP_EOL
+					'This tool must be run from a git repository.'
 				);
 				exit(1);
 			}
@@ -81,7 +81,6 @@ class CLI implements Log\LoggerAwareInterface
 				$this->logger->error(
 					'Could not find "composer.json". Make sure you are in '
 					. 'the project root and the project is a composer module.'
-					. PHP_EOL
 				);
 				exit(1);
 			}
@@ -90,7 +89,7 @@ class CLI implements Log\LoggerAwareInterface
 			if ($repo_name === null) {
 				$this->logger->error(
 					'Could not find get git repository name. Git repository '
-					. 'must have a remote named "origin".' . PHP_EOL
+					. 'must have a remote named "origin".'
 				);
 				exit(1);
 			}
@@ -103,7 +102,7 @@ class CLI implements Log\LoggerAwareInterface
 			if ($remote === null) {
 				$this->logger->error(
 					'Could not find silverorange remote. A remote with the '
-					. 'URL "{remote}" must exist.' . PHP_EOL,
+					. 'URL "{remote}" must exist.',
 					array(
 						'remote' => $remote_url,
 					)
@@ -129,7 +128,7 @@ class CLI implements Log\LoggerAwareInterface
 			if ($release_branch === null) {
 				$this->logger->error(
 					'Could not create release branch from "{branch}". A branch '
-					. 'with the same name may already exist.' . PHP_EOL,
+					. 'with the same name may already exist.',
 					array(
 						'branch' => $branch,
 					)
@@ -143,18 +142,16 @@ class CLI implements Log\LoggerAwareInterface
 			var_dump($remote_url);
 			var_dump($remote);
 
-// 3. get new release version from remote
-// 4. create release branch `release-foo` from remote branch
 // 5. tag branch
 // 6. push tag
 // 7. remove release branch
 
 		} catch (\Console_CommandLine_Exception $e) {
-			$this->logger->error($e->getMessage() . PHP_EOL);
+			$this->logger->error($e->getMessage());
 			exit(1);
 		} catch (\Exception $e) {
-			$this->logger->error($e->getMessage() . PHP_EOL);
-			$this->logger->error($e->getTraceAsString() . PHP_EOL);
+			$this->logger->error($e->getMessage());
+			$this->logger->error($e->getTraceAsString());
 			exit(1);
 		}
 
