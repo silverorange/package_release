@@ -9,12 +9,14 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 use silverorange\ModuleRelease;
 
-$handler = new StreamHandler('php://stdout', Logger::INFO);
-$handler->setFormatter(new LineFormatter('%message%' . PHP_EOL));
+$output_handler = new StreamHandler('php://stdout', Logger::DEBUG);
+$output_handler->setFormatter(new LineFormatter('%message%' . PHP_EOL));
+
+$verbosity_handler = new ModuleRelease\VerbosityHandler($output_handler);
 
 $logger = new Logger('module-release-cli');
 $logger->pushProcessor(new PsrLogMessageProcessor());
-$logger->pushHandler($handler);
+$logger->pushHandler($verbosity_handler);
 
 $manager = new ModuleRelease\Manager();
 
@@ -23,6 +25,7 @@ $parser = \Console_CommandLine::fromXmlFile(__DIR__ . '/../data/cli.xml');
 $cli = new ModuleRelease\CLI(
 	$parser,
 	$manager,
+	$verbosity_handler,
 	$logger
 );
 

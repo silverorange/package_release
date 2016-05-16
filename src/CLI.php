@@ -10,15 +10,10 @@ use Psr\Log;
  * @package   ModuleRelease
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2016 silverorange
- * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class CLI implements Log\LoggerAwareInterface
 {
-	const VERBOSITY_NONE     = 0;
-	const VERBOSITY_MESSAGES = 1;
-	const VERBOSITY_DETAILS  = 2;
-
 	/**
 	 * @var \Console_CommandLine
 	 */
@@ -37,15 +32,19 @@ class CLI implements Log\LoggerAwareInterface
 	protected $logger = null;
 
 	/**
-	 * @var integer
+	 * @var \silverorange\ModuleRelease\VerbosityHandler
 	 */
-	protected $verbosity = self::VERBOSITY_NONE;
+	protected $verbosity_handler = null;
 
-	public function __construct(\Console_CommandLine $parser,
-		Manager $manager, Log\LoggerInterface $logger)
-	{
+	public function __construct(
+		\Console_CommandLine $parser,
+		Manager $manager,
+		VerbosityHandler $handler,
+		Log\LoggerInterface $logger
+	) {
 		$this->setParser($parser);
 		$this->setManager($manager);
+		$this->setVerbosityHandler($handler);
 		$this->setLogger($logger);
 	}
 
@@ -59,6 +58,11 @@ class CLI implements Log\LoggerAwareInterface
 		$this->manager = $manager;
 	}
 
+	public function setVerbosityHandler(VerbosityHandler $handler)
+	{
+		$this->verbosity_handler = $handler;
+	}
+
 	public function setLogger(Log\LoggerInterface $logger)
 	{
 		$this->logger = $logger;
@@ -66,9 +70,18 @@ class CLI implements Log\LoggerAwareInterface
 
 	public function run()
 	{
-
 		try {
 			$result = $this->parser->parse();
+
+			if ($result->options['quiet']) {
+				$this->verbosity_handler->setVerbosity(
+					VerbosityHandler::VERBOSITY_QUIET
+				);
+			} else {
+				$this->verbosity_handler->setVerbosity(
+					$result->options['verbose'] + 1
+				);
+			}
 
 			if (!$this->manager->isInGitRepo()) {
 				$this->logger->error(
@@ -136,12 +149,13 @@ class CLI implements Log\LoggerAwareInterface
 				exit(1);
 			}
 
+/*
 			var_dump($current_version);
 			var_dump($next_version);
 			var_dump($repo_name);
 			var_dump($remote_url);
 			var_dump($remote);
-
+*/
 // 5. tag branch
 // 6. push tag
 // 7. remove release branch

@@ -33,4 +33,10 @@
 		<description>Sets verbosity level. Use multiples for more detail (e.g. "-vv").</description>
 		<action>Counter</action>
 	</option>
+	<option name="quiet">
+		<short_name>-q</short_name>
+		<long_name>--quiet</long_name>
+		<description>Turn off all output.</description>
+		<action>StoreTrue</action>
+	</option>
 </command>
