@@ -15,6 +15,7 @@ Options:
                                  "minor" is used.
   -v, --verbose                  Sets verbosity level. Use multiples for
                                  more detail (e.g. "-vv").
+  -q, --quiet                    Turn off all output.
   -h, --help                     show this help message and exit
   --version                      show the program version and exit
 </pre>
