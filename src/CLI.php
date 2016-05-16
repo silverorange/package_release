@@ -126,11 +126,23 @@ class CLI implements Log\LoggerAwareInterface
 			$current_version = $this->manager->getCurrentVersionFromRemote(
 				$remote
 			);
+			if ($current_version === '0.0.0') {
+				$this->logger->warn(
+					'No existing release. Next release will be first release.'
+				);
+			}
 
 			$next_version = $this->manager->getNextVersion(
 				$current_version,
 				$result->options['type']
 			);
+			$this->logger->notice(
+				'Releasing version {version}:',
+				array(
+					'version' => $next_version,
+				)
+			);
+			$this->logger->notice('');
 
 			$branch = $result->options['branch'];
 			$release_branch = $this->manager->createReleaseBranch(
@@ -147,19 +159,81 @@ class CLI implements Log\LoggerAwareInterface
 					)
 				);
 				exit(1);
+			} else {
+				$this->logger->notice(
+					'=> created release branch "{branch}".',
+					array(
+						'branch' => $release_branch,
+					)
+				);
 			}
 
-/*
-			var_dump($current_version);
-			var_dump($next_version);
-			var_dump($repo_name);
-			var_dump($remote_url);
-			var_dump($remote);
-*/
-// 5. tag branch
-// 6. push tag
-// 7. remove release branch
+			if ($result->options['message'] == '') {
+				$message = sprintf(
+					'Release version %s.',
+					$next_version
+				);
+			} else {
+				$message = $result->options['message'];
+			}
+			$success = $this->manager->createReleaseTag(
+				$next_version,
+				$message
+			);
+			if ($success) {
+				$this->logger->notice(
+					'=> tagged release with message "{message}".',
+					array(
+						'message' => $message,
+					)
+				);
+			} else {
+				$this->logger->error(
+					'Failed to create release tag for "{tag}".',
+					array(
+						'tag' => $next_version,
+					)
+				);
+				exit(1);
+			}
 
+			if ($this->manager->pushTagToRemote($next_version, $remote)) {
+				$this->logger->notice(
+					'=> pushed tag to "{remote}".',
+					array(
+						'remote' => $remote,
+					)
+				);
+			} else {
+				$this->logger->error(
+					'Could not push tag "{tag}" to remote "{remote}".',
+					array(
+						'tag' => $next_version,
+						'remote' => $remote,
+					)
+				);
+				exit(1);
+			}
+
+			if ($this->manager->deleteBranch($release_branch)) {
+				$this->logger->notice(
+					'=> removed release branch "{branch}".',
+					array(
+						'branch' => $release_branch,
+					)
+				);
+			} else {
+				$this->logger->error(
+					'Could not delete release branch "{branch}".',
+					array(
+						'branch' => $release_branch,
+					)
+				);
+				exit(1);
+			}
+
+			$this->logger->notice('');
+			$this->logger->notice('Done.');
 		} catch (\Console_CommandLine_Exception $e) {
 			$this->logger->error($e->getMessage());
 			exit(1);
@@ -168,43 +242,5 @@ class CLI implements Log\LoggerAwareInterface
 			$this->logger->error($e->getTraceAsString());
 			exit(1);
 		}
-
-
-/*
-if ($so_remote === null) {
-	echo "No remote set up for silverorange.\n";
-	exit(1);
-}
-
-// get the current branch name. By convention, this should match on
-// silverorange.
-$branch = trim(`git rev-parse --abbrev-ref HEAD`);
-
-
-// create a fresh branch from silverorange to do the packaging
-$result = `git checkout -b package-$branch $so_remote/$branch 2>&1`;
-if (preg_match('/^error/', $result) === 1) {
-	echo $result;
-	echo "Failed to checkout new branch for package release.\n";
-	exit(1);
-}
-
-	// push changes to silverorange/$branch
-	echo `git push  $so_remote package-$branch:$branch`;
-
-	// tag release
-	$tag_name = $package_version;
-	echo `git tag -a $tag_name -m "Release $tag_name"`;
-	echo `git push $so_remote $tag_name`;
-
-}
-
-`git checkout $branch`;
-`git branch -D package-$branch`;
-
-`git fetch $so_remote`;
-`git rebase $so_remote/$branch`;
-`git push origin $branch`;
-*/
 	}
 }

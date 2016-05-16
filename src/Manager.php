@@ -124,10 +124,10 @@ class Manager
 		$escaped_parent = escapeshellarg($parent);
 		$escaped_release = escapeshellarg($release);
 
-		`git fetch $escaped_remote $escaped_parent`;
+		`git fetch -q $escaped_remote $escaped_parent`;
 
 		$command = sprintf(
-			'git checkout -b %s %s/%s',
+			'git checkout -q -b %s %s/%s',
 			$escaped_release,
 			$escaped_remote,
 			$escaped_parent
@@ -142,6 +142,84 @@ class Manager
 		}
 
 		return $release;
+	}
+
+	/**
+	 * Creates a release tag from the current branch
+	 *
+	 * @param string $version the release version.
+	 * @param string $message the release message.
+	 *
+	 * @return true on success, false on failure.
+	 */
+	public function createReleaseTag($version, $message)
+	{
+		$escaped_version = escapeshellarg($version);
+		$escaped_message = escapeshellarg($message);
+
+		$command = sprintf(
+			'git tag -a %s -m %s',
+			$escaped_version,
+			$escaped_message
+		);
+
+		$output = array();
+		$return = 0;
+		exec($command, $output, $return);
+
+		return ($return === 0);
+	}
+
+	/**
+	 * Pushes tag to remote
+	 *
+	 * @param string $tag    the name of the tag to push.
+	 * @param string $remote the name of the remote to push to.
+	 *
+	 * @return true on success, false on failure.
+	 */
+	public function pushTagToRemote($tag, $remote)
+	{
+		$escaped_tag = escapeshellarg($tag);
+		$escaped_remote = escapeshellarg($remote);
+
+		$command = sprintf(
+			'git push -q %s %s',
+			$escaped_remote,
+			$escaped_tag
+		);
+
+		$output = array();
+		$return = 0;
+		exec($command, $output, $return);
+
+		return ($return === 0);
+	}
+
+	/**
+	 * Deletes a branch
+	 *
+	 * @param string $branch the name of the branch to delete.
+	 *
+	 * @return true on success, false on failure.
+	 */
+	public function deleteBranch($branch)
+	{
+		if ($branch === 'master') {
+			// can't delete master
+			return false;
+		}
+
+		$escaped_branch = escapeshellarg($branch);
+
+		`git checkout -q master`;
+
+		$command = sprintf('git branch -D %s', $escaped_branch);
+		$output = array();
+		$return = 0;
+		exec($command, $output, $return);
+
+		return ($return === 0);
 	}
 
 	/**
