@@ -1,6 +1,15 @@
 #!/usr/bin/php
 <?php
 
+/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
+
+/**
+ * @package   ModuleRelease
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2016 silverorange
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ */
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Monolog\Logger;
