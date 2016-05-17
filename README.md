@@ -24,6 +24,6 @@ Development
 -----------
 This tool uses [composer](https://getcomposer.org/). To test during
 development, make sure you have the required modules installed by running
-`composer update`.
+`composer install`.
 
 You can run to tool using `./bin/module-release`.
