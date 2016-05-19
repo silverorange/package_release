@@ -1,6 +1,6 @@
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
+/* vim: set expandtab tabstop=4 shiftwidth=4: */
 
 namespace silverorange\ModuleRelease;
 
@@ -19,55 +19,55 @@ use Monolog\Logger;
  */
 class VerbosityHandler extends HandlerWrapper
 {
-	const VERBOSITY_QUIET = 0;
-	const VERBOSITY_NORMAL = 1;
-	const VERBOSITY_VERBOSE  = 2;
-	const VERBOSITY_VERY_VERBOSE  = 3;
-	const VERBOSITY_DEBUG = 4;
+    const VERBOSITY_QUIET = 0;
+    const VERBOSITY_NORMAL = 1;
+    const VERBOSITY_VERBOSE  = 2;
+    const VERBOSITY_VERY_VERBOSE  = 3;
+    const VERBOSITY_DEBUG = 4;
 
-	/**
-	 * @var integer
-	 */
-	protected $verbosity = self::VERBOSITY_NORMAL;
+    /**
+     * @var integer
+     */
+    protected $verbosity = self::VERBOSITY_NORMAL;
 
-	/**
-	 * @var array
-	 */
-	protected $verbosity_map = array(
-		self::VERBOSITY_NORMAL => Logger::WARNING,
-		self::VERBOSITY_VERBOSE => Logger::NOTICE,
-		self::VERBOSITY_VERY_VERBOSE => Logger::INFO,
-		self::VERBOSITY_DEBUG => Logger::DEBUG,
-	);
+    /**
+     * @var array
+     */
+    protected $verbosity_map = array(
+        self::VERBOSITY_NORMAL => Logger::WARNING,
+        self::VERBOSITY_VERBOSE => Logger::NOTICE,
+        self::VERBOSITY_VERY_VERBOSE => Logger::INFO,
+        self::VERBOSITY_DEBUG => Logger::DEBUG,
+    );
 
-	public function __construct(
-		HandlerInterface $handler,
-		$verbosity = self::VERBOSITY_NORMAL
-	) {
-		parent::__construct($handler);
-		$this->setVerbosity($verbosity);
-	}
+    public function __construct(
+        HandlerInterface $handler,
+        $verbosity = self::VERBOSITY_NORMAL
+    ) {
+        parent::__construct($handler);
+        $this->setVerbosity($verbosity);
+    }
 
-	/**
-	 * Sets the level of verbosity to use for the logger
-	 *
-	 * @param integer $verbosity the verbosity level to use.
-	 *
-	 * @return void
-	 */
-	public function setVerbosity($verbosity)
-	{
-		$this->verbosity = (integer)$verbosity;
-	}
+    /**
+     * Sets the level of verbosity to use for the logger
+     *
+     * @param integer $verbosity the verbosity level to use.
+     *
+     * @return void
+     */
+    public function setVerbosity($verbosity)
+    {
+        $this->verbosity = (integer)$verbosity;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function isHandling(array $record)
-	{
-		return (
-			isset($this->verbosity_map[$this->verbosity])
-			&& $record['level'] >= $this->verbosity_map[$this->verbosity]
-		);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function isHandling(array $record)
+    {
+        return (
+            isset($this->verbosity_map[$this->verbosity])
+            && $record['level'] >= $this->verbosity_map[$this->verbosity]
+        );
+    }
 }
