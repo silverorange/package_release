@@ -124,20 +124,34 @@ class Manager
         $escaped_parent = escapeshellarg($parent);
         $escaped_release = escapeshellarg($release);
 
-        `git fetch -q $escaped_remote $escaped_parent`;
-
-        $command = sprintf(
-            'git checkout -q -b %s %s/%s',
-            $escaped_release,
+        // Fetch only the parent branch from the remote.
+        $fetch_command = sprintf(
+            'git fetch -q %1$s %2$s:refs/remotes/%1$s/%2$s',
             $escaped_remote,
             $escaped_parent
         );
 
         $output = array();
         $return = 0;
-        exec($command, $output, $return);
+        exec($fetch_command, $output, $return);
+        if ($return === 0) {
 
-        if ($return !== 0) {
+            $checkout_command = sprintf(
+                'git checkout -q -b %s %s/%s',
+                $escaped_release,
+                $escaped_remote,
+                $escaped_parent
+            );
+
+            $output = array();
+            $return = 0;
+            exec($checkout_command, $output, $return);
+
+            if ($return !== 0) {
+                $release = null;
+            }
+
+        } else {
             $release = null;
         }
 
