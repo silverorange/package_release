@@ -2,7 +2,7 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 
-namespace silverorange\ModuleRelease;
+namespace silverorange\PackageRelease;
 
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\HandlerWrapper;
@@ -12,7 +12,7 @@ use Monolog\Logger;
  * Monolog handler warapper that filters a handler based on a set verbosity
  * level
  *
- * @package   ModuleRelease
+ * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2016 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License

@@ -1,10 +1,10 @@
-Module Release
-==============
-Command-line tool to release new versions of composer modules.
+Package Release
+===============
+Command-line tool to release new versions of composer packages.
 
 <pre>
 Usage:
-  ./bin/module-release [options]
+  ./bin/package-release [options]
 
 Options:
   -b branch, --branch=branch     Remote branch to use for release. If not
@@ -23,7 +23,7 @@ Options:
 Development
 -----------
 This tool uses [composer](https://getcomposer.org/). To test during
-development, make sure you have the required modules installed by running
+development, make sure you have the required packages installed by running
 `composer install`.
 
-You can run to tool using `./bin/module-release`.
+You can run to tool using `./bin/package-release`.

@@ -2,10 +2,10 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 
-namespace silverorange\ModuleRelease;
+namespace silverorange\PackageRelease;
 
 /**
- * @package   ModuleRelease
+ * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2016 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
@@ -29,12 +29,12 @@ class Manager
     }
 
     /**
-     * Checks if the current directory is a composer module
+     * Checks if the current directory is a composer package
      *
-     * @return boolean true if the current directory is a composer module,
+     * @return boolean true if the current directory is a composer package,
      *                 otherwise false.
      */
-    public function isComposerModule()
+    public function isComposerPackage()
     {
         return (file_exists('composer.json') && is_readable('composer.json'));
     }
@@ -63,12 +63,12 @@ class Manager
     }
 
     /**
-     * Gets the name of the current composer module
+     * Gets the name of the current composer package
      *
-     * @return string the name of the current composer module or null if the
+     * @return string the name of the current composer package or null if the
      *                name could not be parsed from the composer.json file.
      */
-    public function getComposerModuleName()
+    public function getComposerPackageName()
     {
         $name = null;
 

@@ -4,7 +4,7 @@
 /* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
 
 /**
- * @package   ModuleRelease
+ * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2016 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
@@ -16,22 +16,22 @@ use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
-use silverorange\ModuleRelease;
+use silverorange\PackageRelease;
 
 $output_handler = new StreamHandler('php://stdout', Logger::DEBUG);
 $output_handler->setFormatter(new LineFormatter('%message%' . PHP_EOL));
 
-$verbosity_handler = new ModuleRelease\VerbosityHandler($output_handler);
+$verbosity_handler = new PackageRelease\VerbosityHandler($output_handler);
 
-$logger = new Logger('module-release-cli');
+$logger = new Logger('package-release-cli');
 $logger->pushProcessor(new PsrLogMessageProcessor());
 $logger->pushHandler($verbosity_handler);
 
-$manager = new ModuleRelease\Manager();
+$manager = new PackageRelease\Manager();
 
 $parser = \Console_CommandLine::fromXmlFile(__DIR__ . '/../data/cli.xml');
 
-$cli = new ModuleRelease\CLI(
+$cli = new PackageRelease\CLI(
 	$parser,
 	$manager,
 	$verbosity_handler,
