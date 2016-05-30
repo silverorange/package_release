@@ -2,12 +2,12 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 
-namespace silverorange\ModuleRelease;
+namespace silverorange\PackageRelease;
 
 use Psr\Log;
 
 /**
- * @package   ModuleRelease
+ * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2016 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
@@ -20,7 +20,7 @@ class CLI implements Log\LoggerAwareInterface
     protected $parser = null;
 
     /**
-     * @var \silverorange\ModuleRelease\Manager
+     * @var \silverorange\PackageRelease\Manager
      */
     protected $manager = null;
 
@@ -32,7 +32,7 @@ class CLI implements Log\LoggerAwareInterface
     protected $logger = null;
 
     /**
-     * @var \silverorange\ModuleRelease\VerbosityHandler
+     * @var \silverorange\PackageRelease\VerbosityHandler
      */
     protected $verbosity_handler = null;
 
@@ -90,10 +90,10 @@ class CLI implements Log\LoggerAwareInterface
                 exit(1);
             }
 
-            if (!$this->manager->isComposerModule()) {
+            if (!$this->manager->isComposerPackage()) {
                 $this->logger->error(
                     'Could not find "composer.json". Make sure you are in '
-                    . 'the project root and the project is a composer module.'
+                    . 'the project root and the project is a composer package.'
                 );
                 exit(1);
             }

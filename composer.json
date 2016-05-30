@@ -1,9 +1,9 @@
 {
-    "name": "silverorange/module_release",
-    "description": "Command-line tool to release a new version of a composer module.",
+    "name": "silverorange/package_release",
+    "description": "Command-line tool to release a new version of a composer package.",
     "type": "library",
     "keywords": [ "composer", "release", "git", "package" ],
-    "homepage": "https://github.com/silverorange/module_release",
+    "homepage": "https://github.com/silverorange/package_release",
     "license": "MIT",
     "authors": [
         {
@@ -26,11 +26,11 @@
         ]
     },
     "bin": [
-        "bin/module-release"
+        "bin/package-release"
     ],
     "autoload": {
         "psr-4": {
-            "silverorange\\ModuleRelease\\" : "src/"
+            "silverorange\\PackageRelease\\" : "src/"
         }
     }
 }
