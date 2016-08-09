@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
+/* vim: set expandtab tabstop=4 shiftwidth=4: */
 
 /**
  * @package   PackageRelease
@@ -10,7 +10,21 @@
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
+$autoloadPaths = array(
+    // Try to load autoloader if this is the root project.
+    __DIR__ . '/../vendor/autoload.php',
+
+    // Try to load an autoloader if this is installed as a library for
+    // another root project.
+    __DIR__ . '/../../../autoload.php',
+);
+
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        break;
+    }
+}
 
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
@@ -32,10 +46,10 @@ $manager = new PackageRelease\Manager();
 $parser = \Console_CommandLine::fromXmlFile(__DIR__ . '/../data/cli.xml');
 
 $cli = new PackageRelease\CLI(
-	$parser,
-	$manager,
-	$verbosity_handler,
-	$logger
+    $parser,
+    $manager,
+    $verbosity_handler,
+    $logger
 );
 
 $cli->run();
