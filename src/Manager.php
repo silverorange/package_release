@@ -226,7 +226,7 @@ class Manager
 
         $escaped_branch = escapeshellarg($branch);
 
-        `git checkout -q master`;
+        `git checkout -q @{-1}`;
 
         $command = sprintf('git branch -D %s', $escaped_branch);
         $output = array();
