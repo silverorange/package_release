@@ -37,6 +37,8 @@ if ($autoloader === null) {
     );
     fclose($stderr);
     exit(1);
+} else {
+    require_once $autoloader;
 }
 
 use Monolog\Logger;
