@@ -101,7 +101,7 @@ class CLI implements Log\LoggerAwareInterface
             $repo_name = $this->manager->getRepoName();
             if ($repo_name === null) {
                 $this->logger->error(
-                    'Could not find get git repository name. Git repository '
+                    'Could not find git repository name. Git repository '
                     . 'must have a remote named "origin".'
                 );
                 exit(1);
