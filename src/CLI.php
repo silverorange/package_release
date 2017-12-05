@@ -153,7 +153,7 @@ class CLI implements Log\LoggerAwareInterface
             if (!$result->options['yes']) {
                 $continue = $this->prompt->ask(
                     sprintf(
-                        'Ready to release new %s version %s. Continue? (Y/N)',
+                        'Ready to release new %s version %s. Continue? [Y/N]',
                         $result->options['type'],
                         $next_version
                     ),
