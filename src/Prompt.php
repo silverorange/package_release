@@ -25,19 +25,25 @@ class Prompt
     /**
      * Asks a yes or no question, waits for a response and returns a boolean
      *
-     * @param string $prompt optional. The prompt text to use.
+     * @param string $line1 optional. The prompt text to use. If $line2 is
+     *                      specified, this is displayed above the input line.
+     *                      If not specified, 'Yes or no? ' is used.
+     * @param string $line2 optional. The prompt text to use. $line1 is
+     *                      displayed above the input and this line is displayed
+     *                      before the input. If not specified, $line1 is
+     *                      displayed before the input.
      *
      * @return boolean true if the user entered yes, otherwise false.
      */
-    public function ask($line1 = 'Yes or no? ', $line2 = '')
+    public function ask($line1 = 'Yes or no? ', $line2 = null)
     {
         $answered = false;
 
-        $prompt = ($line2 == '') ? $line1 : $line2;
+        $prompt = ($line2 === null) ? $line1 : $line2;
         $this->logger->notice('');
 
         while (!$answered) {
-            if ($line2 != '') {
+            if ($line2 !== null) {
                 $this->logger->notice($line1);
             }
             $response = readline($prompt);
