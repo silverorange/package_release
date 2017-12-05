@@ -91,7 +91,7 @@ class CLI implements Log\LoggerAwareInterface
                 );
             } else {
                 $this->verbosity_handler->setVerbosity(
-                    $result->options['verbose'] + 1
+                    $result->options['verbose'] + VerbosityHandler::VERBOSITY_VERBOSE
                 );
             }
 
