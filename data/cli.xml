@@ -40,4 +40,10 @@
 		<description>Turn off all output.</description>
 		<action>StoreTrue</action>
 	</option>
+	<option name="yes">
+		<short_name>-y</short_name>
+		<long_name>--yes</long_name>
+		<description>Non-interactive mode. Assume yes for prompts.</description>
+		<action>StoreTrue</action>
+	</option>
 </command>

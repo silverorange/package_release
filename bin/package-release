@@ -57,6 +57,7 @@ $logger->pushProcessor(new PsrLogMessageProcessor());
 $logger->pushHandler($verbosity_handler);
 
 $manager = new PackageRelease\Manager();
+$prompt = new PackageRelease\Prompt($logger);
 
 $parser = \Console_CommandLine::fromXmlFile(__DIR__ . '/../data/cli.xml');
 
@@ -64,7 +65,8 @@ $cli = new PackageRelease\CLI(
     $parser,
     $manager,
     $verbosity_handler,
-    $logger
+    $logger,
+    $prompt
 );
 
 $cli->run();

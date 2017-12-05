@@ -36,16 +36,23 @@ class CLI implements Log\LoggerAwareInterface
      */
     protected $verbosity_handler = null;
 
+    /**
+     * @var \silverorange\PackageRelease\Prompt
+     */
+    protected $prompt = null;
+
     public function __construct(
         \Console_CommandLine $parser,
         Manager $manager,
         VerbosityHandler $handler,
-        Log\LoggerInterface $logger
+        Log\LoggerInterface $logger,
+        Prompt $prompt
     ) {
         $this->setParser($parser);
         $this->setManager($manager);
         $this->setVerbosityHandler($handler);
         $this->setLogger($logger);
+        $this->setPrompt($prompt);
     }
 
     public function setParser(\Console_CommandLine $parser)
@@ -66,6 +73,11 @@ class CLI implements Log\LoggerAwareInterface
     public function setLogger(Log\LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    public function setPrompt(Prompt $prompt)
+    {
+        $this->prompt = $prompt;
     }
 
     public function run()
@@ -136,6 +148,24 @@ class CLI implements Log\LoggerAwareInterface
                 $current_version,
                 $result->options['type']
             );
+
+            // Prompt to continue release.
+            if (!$result->options['yes']) {
+                $continue = $this->prompt->ask(
+                    sprintf(
+                        'Ready to release new %s version %s. Continue? (Y/N)',
+                        $result->options['type'],
+                        $next_version
+                    ),
+                    ' => '
+                );
+
+                if (!$continue) {
+                    $this->logger->notice('Go it. Not releasing.');
+                    exit(0);
+                }
+            }
+
             $this->logger->notice(
                 'Releasing version {version}:',
                 array(
