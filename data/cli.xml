@@ -22,9 +22,10 @@
 			<choice>major</choice>
 			<choice>minor</choice>
 			<choice>micro</choice>
+			<choice>patch</choice>
 		</choices>
 		<default>minor</default>
-		<description>Release type. Must be one of "major", "minor", or "micro". If not specified, "minor" is used.</description>
+		<description>Release type. Must be one of "major", "minor", or "patch". If not specified, "minor" is used. Semver 2.0 (https://semver.org/) is used to pick the next release number.</description>
 		<action>StoreString</action>
 	</option>
 	<option name="verbose">
