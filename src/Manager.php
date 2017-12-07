@@ -14,7 +14,8 @@ class Manager
 {
     const VERSION_MAJOR = 'major';
     const VERSION_MINOR = 'minor';
-    const VERSION_MICRO = 'micro';
+    const VERSION_PATCH = 'patch';
+    const VERSION_MICRO = 'micro'; // deprecated alias for VERSION_PATCH
 
     /**
      * Checks if the current directory is a git repository
@@ -297,7 +298,7 @@ class Manager
      *                                 one of
      *                                 {@link PackageRelease::VERSION_MAJOR},
      *                                 {@link PackageRelease::VERSION_MINOR}, or
-     *                                 {@link PackageRelease::VERSION_MICRO}. If
+     *                                 {@link PackageRelease::VERSION_PATCH}. If
      *                                 not specified, a minor release is
      *                                 used.
      *
@@ -316,6 +317,7 @@ class Manager
                 case self::VERSION_MAJOR:
                     $next = ($parts[0] + 1) . '.0.0';
                     break;
+                case self::VERSION_PATCH:
                 case self::VERSION_MICRO:
                     $next = $parts[0] . '.' . $parts[1] . '.' . ($parts[2] + 1);
                     break;

@@ -57,7 +57,7 @@ class VerbosityHandler extends HandlerWrapper
      */
     public function setVerbosity($verbosity)
     {
-        $this->verbosity = (integer)$verbosity;
+        $this->verbosity = min((integer)$verbosity, self::VERBOSITY_DEBUG);
     }
 
     /**
