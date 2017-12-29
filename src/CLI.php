@@ -88,7 +88,7 @@ class CLI
             $this->verbosity_handler->setIsQuiet($result->options['quiet']);
 
             if (!$this->manager->isInGitRepo()) {
-                $this->output->error(
+                $this->output->out(
                     'This tool must be run from a git repository.'
                     . PHP_EOL . PHP_EOL
                 );
@@ -96,7 +96,7 @@ class CLI
             }
 
             if (!$this->manager->isComposerPackage()) {
-                $this->output->error(
+                $this->output->out(
                     sprintf(
                         'Could not find %s. Make sure you are in the project '
                         . 'root and the project is a composer package.'
@@ -109,7 +109,7 @@ class CLI
 
             $repo_name = $this->manager->getRepoName();
             if ($repo_name === null) {
-                $this->output->error(
+                $this->output->out(
                     sprintf(
                         'Could not find git repository name. Git repository '
                         . 'must have a remote named %s.' . PHP_EOL . PHP_EOL,
@@ -125,7 +125,7 @@ class CLI
             );
             $remote = $this->manager->getRemoteByUrl($remote_url);
             if ($remote === null) {
-                $this->output->error(
+                $this->output->out(
                     sprintf(
                         'Could not find silverorange remote. A remote with the '
                         . 'URL %s must exist.' . PHP_EOL . PHP_EOL,
@@ -139,7 +139,7 @@ class CLI
                 $remote
             );
             if ($current_version === '0.0.0') {
-                $this->output->warn(
+                $this->output->out(
                     Chalk::cyan(
                         'No existing release. Next release will be first '
                         . 'release.' . PHP_EOL
@@ -166,7 +166,7 @@ class CLI
                 );
 
                 if (!$continue) {
-                    $this->output->notice(
+                    $this->output->out(
                         Chalk::style(
                             'Got it. Not releasing.',
                             new Style([ Color::BLACK, Style::BOLD ])
@@ -177,7 +177,7 @@ class CLI
                 }
             }
 
-            $this->output->notice(
+            $this->output->out(
                 Chalk::style(
                     sprintf(
                         'Releasing version %s:' . PHP_EOL,
@@ -186,7 +186,7 @@ class CLI
                     new Style([Color::BLACK, Style::UNDERLINED, Style::BOLD])
                 )
             );
-            $this->output->notice(PHP_EOL);
+            $this->output->out(PHP_EOL);
 
             $branch = $result->options['branch'];
             $this->startCommand();
@@ -279,9 +279,9 @@ class CLI
                 );
             }
 
-            $this->output->notice(PHP_EOL);
-            $this->output->notice(Chalk::green('Success!') . PHP_EOL . PHP_EOL);
-            $this->output->notice(
+            $this->output->out(PHP_EOL);
+            $this->output->out(Chalk::green('Success!') . PHP_EOL . PHP_EOL);
+            $this->output->out(
                 sprintf(
                     'The composer repository will automatically update. It '.
                     'may take a few minutes for the release to appear at %s.'
@@ -290,23 +290,23 @@ class CLI
                 )
             );
         } catch (\Console_CommandLine_Exception $e) {
-            $this->output->error($e->getMessage());
+            $this->output->out($e->getMessage());
             exit(1);
         } catch (\Exception $e) {
-            $this->output->error($e->getMessage());
-            $this->output->error($e->getTraceAsString());
+            $this->output->out($e->getMessage());
+            $this->output->out($e->getTraceAsString());
             exit(1);
         }
     }
 
     protected function startCommand()
     {
-        $this->output->notice(Chalk::dark_gray('… '));
+        $this->output->out(Chalk::dark_gray('… '));
     }
 
     protected function handleSuccess($message)
     {
-        $this->output->notice(
+        $this->output->out(
             sprintf(
                 "\r%s %s" . PHP_EOL,
                 Chalk::green('✓'),
@@ -317,7 +317,7 @@ class CLI
 
     protected function handleError($message, $debug_output)
     {
-        $this->output->error(
+        $this->output->out(
             sprintf(
                 "\r%s %s" . PHP_EOL . PHP_EOL . '%s' . PHP_EOL,
                 Chalk::red('✗'),

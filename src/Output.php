@@ -32,21 +32,7 @@ class Output
         $this->verbosity_handler = $handler;
     }
 
-    public function error($message)
-    {
-        if (!$this->verbosity_handler->isQuiet()) {
-            fwrite($this->stdout, $message);
-        }
-    }
-
-    public function warn($message)
-    {
-        if (!$this->verbosity_handler->isQuiet()) {
-            fwrite($this->stdout, $message);
-        }
-    }
-
-    public function notice($message)
+    public function out($message)
     {
         if (!$this->verbosity_handler->isQuiet()) {
             fwrite($this->stdout, $message);
