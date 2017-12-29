@@ -169,7 +169,7 @@ class CLI
                     $this->output->out(
                         Chalk::style(
                             'Got it. Not releasing.',
-                            new Style([ Color::BLACK, Style::BOLD ])
+                            new Style([ Style::BOLD ])
                         )
                         . PHP_EOL . PHP_EOL
                     );
@@ -183,7 +183,7 @@ class CLI
                         'Releasing version %s:' . PHP_EOL,
                         $next_version
                     ),
-                    new Style([Color::BLACK, Style::UNDERLINED, Style::BOLD])
+                    new Style([ Style::UNDERLINED, Style::BOLD ])
                 )
             );
             $this->output->out(PHP_EOL);
