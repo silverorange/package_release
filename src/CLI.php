@@ -290,11 +290,11 @@ class CLI
                 )
             );
         } catch (\Console_CommandLine_Exception $e) {
-            $this->output->out($e->getMessage());
+            $this->output->out($e->getMessage() . PHP_EOL . PHP_EOL);
             exit(1);
         } catch (\Exception $e) {
-            $this->output->out($e->getMessage());
-            $this->output->out($e->getTraceAsString());
+            $this->output->out($e->getMessage() . PHP_EOL . PHP_EOL);
+            $this->output->out($e->getTraceAsString() . PHP_EOL . PHP_EOL);
             exit(1);
         }
     }
