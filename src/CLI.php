@@ -85,15 +85,7 @@ class CLI
         try {
             $result = $this->parser->parse();
 
-            if ($result->options['quiet']) {
-                $this->verbosity_handler->setVerbosity(
-                    VerbosityHandler::VERBOSITY_QUIET
-                );
-            } else {
-                $this->verbosity_handler->setVerbosity(
-                    $result->options['verbose'] + VerbosityHandler::VERBOSITY_NORMAL
-                );
-            }
+            $this->verbosity_handler->setIsQuiet($result->options['quiet']);
 
             if (!$this->manager->isInGitRepo()) {
                 $this->output->error(
@@ -161,7 +153,7 @@ class CLI
             );
 
             // Prompt to continue release.
-            if (!$result->options['yes']) {
+            if (!$result->options['yes'] && !$result->options['quiet']) {
                 $continue = $this->prompt->ask(
                     sprintf(
                         'Ready to release new %s version %s. '

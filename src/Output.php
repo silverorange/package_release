@@ -34,21 +34,21 @@ class Output
 
     public function error($message)
     {
-        if ($this->verbosity_handler->isHandling()) {
+        if (!$this->verbosity_handler->isQuiet()) {
             fwrite($this->stdout, $message);
         }
     }
 
     public function warn($message)
     {
-        if ($this->verbosity_handler->isHandling()) {
+        if (!$this->verbosity_handler->isQuiet()) {
             fwrite($this->stdout, $message);
         }
     }
 
     public function notice($message)
     {
-        if ($this->verbosity_handler->isHandling()) {
+        if (!$this->verbosity_handler->isQuiet()) {
             fwrite($this->stdout, $message);
         }
     }

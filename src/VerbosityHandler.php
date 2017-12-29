@@ -5,39 +5,40 @@ namespace silverorange\PackageRelease;
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2016 silverorange
+ * @copyright 2016-2017 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class VerbosityHandler
 {
-    const VERBOSITY_QUIET = 0;
-    const VERBOSITY_NORMAL = 1;
-
     /**
-     * @var integer
+     * @var boolean
      */
-    protected $verbosity = self::VERBOSITY_NORMAL;
+    protected $is_quiet = false;
 
-    public function __construct(
-        $verbosity = self::VERBOSITY_NORMAL
-    ) {
-        $this->setVerbosity($verbosity);
+    public function __construct($is_quiet = false)
+    {
+        $this->setIsQuiet($is_quiet);
     }
 
     /**
-     * Sets the level of verbosity to use for the logger
+     * Sets whether or not output should be suppressed
      *
-     * @param integer $verbosity the verbosity level to use.
+     * @param boolean $is_quiet whether or not output should be suppressed.
      *
      * @return void
      */
-    public function setVerbosity($verbosity)
+    public function setIsQuiet($is_quiet)
     {
-        $this->verbosity = min((integer)$verbosity, self::VERBOSITY_NORMAL);
+        $this->is_quiet = $is_quiet ? true : false;
     }
 
-    public function isHandling($level = self::VERBOSITY_NORMAL)
+    /**
+     * Gets whether or not output should be suppressed
+     *
+     * @return boolean
+     */
+    public function isQuiet()
     {
-        return ($level >= $this->verbosity);
+        return $this->is_quiet;
     }
 }
