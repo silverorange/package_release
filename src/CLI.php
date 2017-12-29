@@ -98,14 +98,19 @@ class CLI
             if (!$this->manager->isInGitRepo()) {
                 $this->output->error(
                     'This tool must be run from a git repository.'
+                    . PHP_EOL . PHP_EOL
                 );
                 exit(1);
             }
 
             if (!$this->manager->isComposerPackage()) {
                 $this->output->error(
-                    'Could not find “composer.json”. Make sure you are in '
-                    . 'the project root and the project is a composer package.'
+                    sprintf(
+                        'Could not find %s. Make sure you are in the project '
+                        . 'root and the project is a composer package.'
+                        . PHP_EOL . PHP_EOL,
+                        Chalk::magenta('composer.json')
+                    )
                 );
                 exit(1);
             }
@@ -113,8 +118,11 @@ class CLI
             $repo_name = $this->manager->getRepoName();
             if ($repo_name === null) {
                 $this->output->error(
-                    'Could not find git repository name. Git repository '
-                    . 'must have a remote named “origin”.'
+                    sprintf(
+                        'Could not find git repository name. Git repository '
+                        . 'must have a remote named %s.' . PHP_EOL . PHP_EOL,
+                        Chalk::magenta('origin')
+                    )
                 );
                 exit(1);
             }
@@ -128,8 +136,8 @@ class CLI
                 $this->output->error(
                     sprintf(
                         'Could not find silverorange remote. A remote with the '
-                        . 'URL “%s” must exist.',
-                        $remote_url
+                        . 'URL %s must exist.' . PHP_EOL . PHP_EOL,
+                        Chalk::magenta($remote_url)
                     )
                 );
                 exit(1);
