@@ -4,65 +4,29 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1479fd77c262714f42df6090bec7c812",
-    "content-hash": "dff44d2d7ec8e127947f0fad980e7fac",
+    "content-hash": "efcde5c3c9564a462d9fd119e4bb6a75",
     "packages": [
         {
-            "name": "monolog/monolog",
-            "version": "1.19.0",
+            "name": "martin-pettersson/chalk",
+            "version": "0.1.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "5f56ed5212dc509c8dc8caeba2715732abb32dbf"
+                "url": "https://github.com/martin-pettersson/chalk.git",
+                "reference": "a4726d6835bdc7eb3c8c77b2df69fa1b9fddb4c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/5f56ed5212dc509c8dc8caeba2715732abb32dbf",
-                "reference": "5f56ed5212dc509c8dc8caeba2715732abb32dbf",
+                "url": "https://api.github.com/repos/martin-pettersson/chalk/zipball/a4726d6835bdc7eb3c8c77b2df69fa1b9fddb4c5",
+                "reference": "a4726d6835bdc7eb3c8c77b2df69fa1b9fddb4c5",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "psr/log": "~1.0"
-            },
-            "provide": {
-                "psr/log-implementation": "1.0.0"
-            },
-            "require-dev": {
-                "aws/aws-sdk-php": "^2.4.9",
-                "doctrine/couchdb": "~1.0@dev",
-                "graylog2/gelf-php": "~1.0",
-                "jakub-onderka/php-parallel-lint": "0.9",
-                "php-amqplib/php-amqplib": "~2.4",
-                "php-console/php-console": "^3.1.3",
-                "phpunit/phpunit": "~4.5",
-                "phpunit/phpunit-mock-objects": "2.3.0",
-                "raven/raven": "^0.13",
-                "ruflin/elastica": ">=0.90 <3.0",
-                "swiftmailer/swiftmailer": "~5.3"
-            },
-            "suggest": {
-                "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
-                "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
-                "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
-                "ext-mongo": "Allow sending log messages to a MongoDB server",
-                "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
-                "mongodb/mongodb": "Allow sending log messages to a MongoDB server via PHP Driver",
-                "php-amqplib/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib",
-                "php-console/php-console": "Allow sending log messages to Google Chrome",
-                "raven/raven": "Allow sending log messages to a Sentry server",
-                "rollbar/rollbar": "Allow sending log messages to Rollbar",
-                "ruflin/elastica": "Allow sending log messages to an Elastic Search server"
+                "php": ">=5.4"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
-                    "Monolog\\": "src/Monolog"
+                    "Chalk\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -71,39 +35,40 @@
             ],
             "authors": [
                 {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be"
+                    "name": "Martin Pettersson",
+                    "email": "martin_pettersson@outlook.com",
+                    "homepage": "http://martindotcom.se",
+                    "role": "Developer"
                 }
             ],
-            "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
-            "homepage": "http://github.com/Seldaek/monolog",
+            "description": "A tool to style terminal output",
+            "homepage": "http://github.com/martin-pettersson/chalk",
             "keywords": [
-                "log",
-                "logging",
-                "psr-3"
+                "chalk",
+                "color",
+                "style"
             ],
-            "time": "2016-04-12 18:29:35"
+            "time": "2016-08-31T08:35:49+00:00"
         },
         {
             "name": "pear/console_commandline",
-            "version": "v1.2.1",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pear/Console_CommandLine.git",
-                "reference": "cdcf721e6d8a5a217765b548b0bc843018e61b4d"
+                "reference": "7a8afa50bdc8dbfdc0cf394f1101106e8b8f8e67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pear/Console_CommandLine/zipball/cdcf721e6d8a5a217765b548b0bc843018e61b4d",
-                "reference": "cdcf721e6d8a5a217765b548b0bc843018e61b4d",
+                "url": "https://api.github.com/repos/pear/Console_CommandLine/zipball/7a8afa50bdc8dbfdc0cf394f1101106e8b8f8e67",
+                "reference": "7a8afa50bdc8dbfdc0cf394f1101106e8b8f8e67",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-xml": "*",
                 "pear/pear_exception": "^1.0.0",
-                "php": ">=5.1.0"
+                "php": ">=5.3.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "*"
@@ -136,7 +101,7 @@
             "keywords": [
                 "console"
             ],
-            "time": "2015-12-10 19:54:57"
+            "time": "2016-07-14T06:00:57+00:00"
         },
         {
             "name": "pear/pear_exception",
@@ -191,26 +156,31 @@
             "keywords": [
                 "exception"
             ],
-            "time": "2015-02-10 20:07:52"
-        },
+            "time": "2015-02-10T20:07:52+00:00"
+        }
+    ],
+    "packages-dev": [
         {
-            "name": "psr/log",
-            "version": "1.0.0",
+            "name": "silverorange/coding-standard",
+            "version": "0.7.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-fig/log.git",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+                "url": "https://github.com/silverorange/coding-standard.git",
+                "reference": "c43f3ccabbcb5d4231599d769910868742f8962c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "url": "https://api.github.com/repos/silverorange/coding-standard/zipball/c43f3ccabbcb5d4231599d769910868742f8962c",
+                "reference": "c43f3ccabbcb5d4231599d769910868742f8962c",
                 "shasum": ""
+            },
+            "require": {
+                "squizlabs/php_codesniffer": "^3.0.0"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "Psr\\Log\\": ""
+                "psr-4": {
+                    "silverorange\\CodingStandard\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -219,79 +189,50 @@
             ],
             "authors": [
                 {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "name": "Michael Gauthier",
+                    "email": "mike@silverorange.com"
                 }
             ],
-            "description": "Common interface for logging libraries",
+            "description": "silverorange PHP coding standards.",
+            "homepage": "https://github.com/silverorange/coding_standard",
             "keywords": [
-                "log",
-                "psr",
-                "psr-3"
+                "phpcs",
+                "silverorange"
             ],
-            "time": "2012-12-21 11:40:51"
-        }
-    ],
-    "packages-dev": [
+            "time": "2017-12-13T21:34:43+00:00"
+        },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "2.6.1",
+            "version": "3.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "fb72ed32f8418db5e7770be1653e62e0d6f5dd3d"
+                "reference": "d7c00c3000ac0ce79c96fcbfef86b49a71158cd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/fb72ed32f8418db5e7770be1653e62e0d6f5dd3d",
-                "reference": "fb72ed32f8418db5e7770be1653e62e0d6f5dd3d",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/d7c00c3000ac0ce79c96fcbfef86b49a71158cd1",
+                "reference": "d7c00c3000ac0ce79c96fcbfef86b49a71158cd1",
                 "shasum": ""
             },
             "require": {
                 "ext-simplexml": "*",
                 "ext-tokenizer": "*",
                 "ext-xmlwriter": "*",
-                "php": ">=5.1.2"
+                "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0"
             },
             "bin": [
-                "scripts/phpcs",
-                "scripts/phpcbf"
+                "bin/phpcs",
+                "bin/phpcbf"
             ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.x-dev"
+                    "dev-master": "3.x-dev"
                 }
-            },
-            "autoload": {
-                "classmap": [
-                    "CodeSniffer.php",
-                    "CodeSniffer/CLI.php",
-                    "CodeSniffer/Exception.php",
-                    "CodeSniffer/File.php",
-                    "CodeSniffer/Fixer.php",
-                    "CodeSniffer/Report.php",
-                    "CodeSniffer/Reporting.php",
-                    "CodeSniffer/Sniff.php",
-                    "CodeSniffer/Tokens.php",
-                    "CodeSniffer/Reports/",
-                    "CodeSniffer/Tokenizers/",
-                    "CodeSniffer/DocGenerators/",
-                    "CodeSniffer/Standards/AbstractPatternSniff.php",
-                    "CodeSniffer/Standards/AbstractScopeSniff.php",
-                    "CodeSniffer/Standards/AbstractVariableSniff.php",
-                    "CodeSniffer/Standards/IncorrectPatternException.php",
-                    "CodeSniffer/Standards/Generic/Sniffs/",
-                    "CodeSniffer/Standards/MySource/Sniffs/",
-                    "CodeSniffer/Standards/PEAR/Sniffs/",
-                    "CodeSniffer/Standards/PSR1/Sniffs/",
-                    "CodeSniffer/Standards/PSR2/Sniffs/",
-                    "CodeSniffer/Standards/Squiz/Sniffs/",
-                    "CodeSniffer/Standards/Zend/Sniffs/"
-                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -309,7 +250,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2016-05-30 22:24:32"
+            "time": "2017-12-19T21:44:46+00:00"
         }
     ],
     "aliases": [],
