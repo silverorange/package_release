@@ -38,13 +38,13 @@ class Prompt
         $answered = false;
 
         $prompt = ($line2 === null) ? $line1 : $line2;
-        $this->output->notice(PHP_EOL);
+        $this->output->out(PHP_EOL);
 
         while (!$answered) {
             if ($line2 !== null) {
-                $this->output->notice($line1);
+                $this->output->out($line1);
             }
-            $this->output->notice($prompt);
+            $this->output->out($prompt);
             $response = readline();
             if (preg_match('/^y|yes$/i', $response) === 1) {
                 $response = true;
@@ -53,7 +53,7 @@ class Prompt
                 $response = false;
                 $answered = true;
             }
-            $this->output->notice(PHP_EOL);
+            $this->output->out(PHP_EOL);
         }
 
         return $response;
