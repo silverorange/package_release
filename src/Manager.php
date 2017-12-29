@@ -136,7 +136,6 @@ class Manager
         $return = 0;
         exec($fetch_command, $output, $return);
         if ($return === 0) {
-
             $checkout_command = sprintf(
                 'git checkout -q -b %s %s/%s',
                 $escaped_release,
@@ -151,7 +150,6 @@ class Manager
             if ($return !== 0) {
                 $release = null;
             }
-
         } else {
             $release = null;
         }
