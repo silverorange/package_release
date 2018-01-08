@@ -1,73 +1,44 @@
 <?php
 
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-
 namespace silverorange\PackageRelease;
 
-use Monolog\Handler\HandlerInterface;
-use Monolog\Handler\HandlerWrapper;
-use Monolog\Logger;
-
 /**
- * Monolog handler warapper that filters a handler based on a set verbosity
- * level
- *
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2016 silverorange
+ * @copyright 2016-2017 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
-class VerbosityHandler extends HandlerWrapper
+class VerbosityHandler
 {
-    const VERBOSITY_QUIET = 0;
-    const VERBOSITY_NORMAL = 1;
-    const VERBOSITY_VERBOSE  = 2;
-    const VERBOSITY_VERY_VERBOSE  = 3;
-    const VERBOSITY_DEBUG = 4;
-
     /**
-     * @var integer
+     * @var boolean
      */
-    protected $verbosity = self::VERBOSITY_NORMAL;
+    protected $is_quiet = false;
 
-    /**
-     * @var array
-     */
-    protected $verbosity_map = array(
-        self::VERBOSITY_NORMAL => Logger::WARNING,
-        self::VERBOSITY_VERBOSE => Logger::NOTICE,
-        self::VERBOSITY_VERY_VERBOSE => Logger::INFO,
-        self::VERBOSITY_DEBUG => Logger::DEBUG,
-    );
-
-    public function __construct(
-        HandlerInterface $handler,
-        $verbosity = self::VERBOSITY_NORMAL
-    ) {
-        parent::__construct($handler);
-        $this->setVerbosity($verbosity);
+    public function __construct($is_quiet = false)
+    {
+        $this->setIsQuiet($is_quiet);
     }
 
     /**
-     * Sets the level of verbosity to use for the logger
+     * Sets whether or not output should be suppressed
      *
-     * @param integer $verbosity the verbosity level to use.
+     * @param boolean $is_quiet whether or not output should be suppressed.
      *
      * @return void
      */
-    public function setVerbosity($verbosity)
+    public function setIsQuiet($is_quiet)
     {
-        $this->verbosity = min((integer)$verbosity, self::VERBOSITY_DEBUG);
+        $this->is_quiet = $is_quiet ? true : false;
     }
 
     /**
-     * {@inheritdoc}
+     * Gets whether or not output should be suppressed
+     *
+     * @return boolean
      */
-    public function isHandling(array $record)
+    public function isQuiet()
     {
-        return (
-            isset($this->verbosity_map[$this->verbosity])
-            && $record['level'] >= $this->verbosity_map[$this->verbosity]
-        );
+        return $this->is_quiet;
     }
 }

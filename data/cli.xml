@@ -28,16 +28,10 @@
         <description>Release type. Must be one of "major", "minor", or "patch". If not specified, "minor" is used. Semver 2.0 (https://semver.org/) is used to pick the next release number.</description>
         <action>StoreString</action>
     </option>
-    <option name="verbose">
-        <short_name>-v</short_name>
-        <long_name>--verbose</long_name>
-        <description>Sets verbosity level. Use multiples for more detail (e.g. "-vv").</description>
-        <action>Counter</action>
-    </option>
     <option name="quiet">
         <short_name>-q</short_name>
         <long_name>--quiet</long_name>
-        <description>Turn off all output.</description>
+        <description>Turn off all output. Assumes --yes.</description>
         <action>StoreTrue</action>
     </option>
     <option name="yes">

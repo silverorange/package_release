@@ -1,10 +1,10 @@
 <?php
 
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-
 namespace silverorange\PackageRelease;
 
-use Psr\Log;
+use Chalk\Chalk;
+use Chalk\Style;
+use Chalk\Color;
 
 /**
  * @package   PackageRelease
@@ -12,7 +12,7 @@ use Psr\Log;
  * @copyright 2016 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
-class CLI implements Log\LoggerAwareInterface
+class CLI
 {
     /**
      * @var \Console_CommandLine
@@ -27,17 +27,17 @@ class CLI implements Log\LoggerAwareInterface
     /**
      * The logging interface of this application.
      *
-     * @var \Psr\Log\LoggingInterface
+     * @var silverorange\PackageRelease\Output
      */
-    protected $logger = null;
+    protected $output = null;
 
     /**
-     * @var \silverorange\PackageRelease\VerbosityHandler
+     * @var silverorange\PackageRelease\VerbosityHandler
      */
     protected $verbosity_handler = null;
 
     /**
-     * @var \silverorange\PackageRelease\Prompt
+     * @var silverorange\PackageRelease\Prompt
      */
     protected $prompt = null;
 
@@ -45,13 +45,13 @@ class CLI implements Log\LoggerAwareInterface
         \Console_CommandLine $parser,
         Manager $manager,
         VerbosityHandler $handler,
-        Log\LoggerInterface $logger,
+        Output $output,
         Prompt $prompt
     ) {
         $this->setParser($parser);
         $this->setManager($manager);
         $this->setVerbosityHandler($handler);
-        $this->setLogger($logger);
+        $this->setOutput($output);
         $this->setPrompt($prompt);
     }
 
@@ -70,9 +70,9 @@ class CLI implements Log\LoggerAwareInterface
         $this->verbosity_handler = $handler;
     }
 
-    public function setLogger(Log\LoggerInterface $logger)
+    public function setOutput(Output $output)
     {
-        $this->logger = $logger;
+        $this->output = $output;
     }
 
     public function setPrompt(Prompt $prompt)
@@ -85,36 +85,36 @@ class CLI implements Log\LoggerAwareInterface
         try {
             $result = $this->parser->parse();
 
-            if ($result->options['quiet']) {
-                $this->verbosity_handler->setVerbosity(
-                    VerbosityHandler::VERBOSITY_QUIET
-                );
-            } else {
-                $this->verbosity_handler->setVerbosity(
-                    $result->options['verbose'] + VerbosityHandler::VERBOSITY_VERBOSE
-                );
-            }
+            $this->verbosity_handler->setIsQuiet($result->options['quiet']);
 
             if (!$this->manager->isInGitRepo()) {
-                $this->logger->error(
+                $this->output->out(
                     'This tool must be run from a git repository.'
+                    . PHP_EOL . PHP_EOL
                 );
                 exit(1);
             }
 
             if (!$this->manager->isComposerPackage()) {
-                $this->logger->error(
-                    'Could not find "composer.json". Make sure you are in '
-                    . 'the project root and the project is a composer package.'
+                $this->output->out(
+                    sprintf(
+                        'Could not find %s. Make sure you are in the project '
+                        . 'root and the project is a composer package.'
+                        . PHP_EOL . PHP_EOL,
+                        Chalk::magenta('composer.json')
+                    )
                 );
                 exit(1);
             }
 
             $repo_name = $this->manager->getRepoName();
             if ($repo_name === null) {
-                $this->logger->error(
-                    'Could not find git repository name. Git repository '
-                    . 'must have a remote named "origin".'
+                $this->output->out(
+                    sprintf(
+                        'Could not find git repository name. Git repository '
+                        . 'must have a remote named %s.' . PHP_EOL . PHP_EOL,
+                        Chalk::magenta('origin')
+                    )
                 );
                 exit(1);
             }
@@ -125,11 +125,11 @@ class CLI implements Log\LoggerAwareInterface
             );
             $remote = $this->manager->getRemoteByUrl($remote_url);
             if ($remote === null) {
-                $this->logger->error(
-                    'Could not find silverorange remote. A remote with the '
-                    . 'URL "{remote}" must exist.',
-                    array(
-                        'remote' => $remote_url,
+                $this->output->out(
+                    sprintf(
+                        'Could not find silverorange remote. A remote with the '
+                        . 'URL %s must exist.' . PHP_EOL . PHP_EOL,
+                        Chalk::magenta($remote_url)
                     )
                 );
                 exit(1);
@@ -139,8 +139,11 @@ class CLI implements Log\LoggerAwareInterface
                 $remote
             );
             if ($current_version === '0.0.0') {
-                $this->logger->warn(
-                    'No existing release. Next release will be first release.'
+                $this->output->out(
+                    Chalk::cyan(
+                        'No existing release. Next release will be first '
+                        . 'release.' . PHP_EOL
+                    )
                 );
             }
 
@@ -150,50 +153,61 @@ class CLI implements Log\LoggerAwareInterface
             );
 
             // Prompt to continue release.
-            if (!$result->options['yes']) {
+            if (!$result->options['yes'] && !$result->options['quiet']) {
                 $continue = $this->prompt->ask(
                     sprintf(
-                        'Ready to release new %s version %s. Continue? [Y/N]',
+                        'Ready to release new %s version %s. '
+                        . 'Continue? %s' . PHP_EOL,
                         $result->options['type'],
-                        $next_version
+                        Chalk::magenta($next_version),
+                        Chalk::yellow('[Y/N]')
                     ),
-                    ' => '
+                    Chalk::yellow('> ')
                 );
 
                 if (!$continue) {
-                    $this->logger->notice('Go it. Not releasing.');
+                    $this->output->out(
+                        Chalk::style(
+                            'Got it. Not releasing.',
+                            new Style([ Style::BOLD ])
+                        )
+                        . PHP_EOL . PHP_EOL
+                    );
                     exit(0);
                 }
             }
 
-            $this->logger->notice(
-                'Releasing version {version}:',
-                array(
-                    'version' => $next_version,
+            $this->output->out(
+                Chalk::style(
+                    sprintf(
+                        'Releasing version %s:' . PHP_EOL,
+                        $next_version
+                    ),
+                    new Style([ Style::UNDERLINED, Style::BOLD ])
                 )
             );
-            $this->logger->notice('');
+            $this->output->out(PHP_EOL);
 
             $branch = $result->options['branch'];
+            $this->startCommand();
             $release_branch = $this->manager->createReleaseBranch(
                 $branch,
                 $remote,
                 $next_version
             );
             if ($release_branch === null) {
-                $this->logger->error(
-                    'Could not create release branch from "{branch}". A branch '
-                    . 'with the same name may already exist.',
-                    array(
-                        'branch' => $branch,
-                    )
+                $this->handleError(
+                    sprintf(
+                        'could not create release branch from %s',
+                        Chalk::magenta($branch)
+                    ),
+                    $this->manager->getLastError()
                 );
-                exit(1);
             } else {
-                $this->logger->notice(
-                    '=> created release branch "{branch}".',
-                    array(
-                        'branch' => $release_branch,
+                $this->handleSuccess(
+                    sprintf(
+                        'created release branch %s',
+                        Chalk::magenta($release_branch)
                     )
                 );
             }
@@ -206,71 +220,118 @@ class CLI implements Log\LoggerAwareInterface
             } else {
                 $message = $result->options['message'];
             }
+            $this->startCommand();
             $success = $this->manager->createReleaseTag(
                 $next_version,
                 $message
             );
             if ($success) {
-                $this->logger->notice(
-                    '=> tagged release with message "{message}".',
-                    array(
-                        'message' => $message,
+                $this->handleSuccess(
+                    sprintf(
+                        'tagged release with message %s',
+                        Chalk::magenta($message)
                     )
                 );
             } else {
-                $this->logger->error(
-                    'Failed to create release tag for "{tag}".',
-                    array(
-                        'tag' => $next_version,
-                    )
+                $this->handleError(
+                    sprintf(
+                        'failed to create release tag for %s',
+                        Chalk::magenta($next_version)
+                    ),
+                    $this->manager->getLastError()
                 );
-                exit(1);
             }
 
+            $this->startCommand();
             if ($this->manager->pushTagToRemote($next_version, $remote)) {
-                $this->logger->notice(
-                    '=> pushed tag to "{remote}".',
-                    array(
-                        'remote' => $remote,
+                $this->handleSuccess(
+                    sprintf(
+                        'pushed tag to %s',
+                        Chalk::magenta($remote)
                     )
                 );
             } else {
-                $this->logger->error(
-                    'Could not push tag "{tag}" to remote "{remote}".',
-                    array(
-                        'tag' => $next_version,
-                        'remote' => $remote,
-                    )
+                $this->handleError(
+                    sprintf(
+                        'could not push tag %s to remote %s',
+                        Chalk::magenta($next_version),
+                        Chalk::magenta($remote)
+                    ),
+                    $this->manager->getLastError()
                 );
-                exit(1);
             }
 
+            $this->startCommand();
             if ($this->manager->deleteBranch($release_branch)) {
-                $this->logger->notice(
-                    '=> removed release branch "{branch}".',
-                    array(
-                        'branch' => $release_branch,
+                $this->handleSuccess(
+                    sprintf(
+                        'removed release branch %s',
+                        Chalk::magenta($release_branch)
                     )
                 );
             } else {
-                $this->logger->error(
-                    'Could not delete release branch "{branch}".',
-                    array(
-                        'branch' => $release_branch,
-                    )
+                $this->handleError(
+                    sprintf(
+                        'could not delete release branch %s',
+                        Chalk::magenta($release_branch)
+                    ),
+                    $this->manager->getLastError()
                 );
-                exit(1);
             }
 
-            $this->logger->notice('');
-            $this->logger->notice('Done.');
+            $this->output->out(PHP_EOL);
+            $this->output->out(Chalk::green('Success!') . PHP_EOL . PHP_EOL);
+            $this->output->out(
+                sprintf(
+                    'The composer repository will automatically update. It '.
+                    'may take a few minutes for the release to appear at %s.'
+                    . PHP_EOL . PHP_EOL,
+                    Chalk::blue('https://composer/')
+                )
+            );
         } catch (\Console_CommandLine_Exception $e) {
-            $this->logger->error($e->getMessage());
+            $this->output->out($e->getMessage() . PHP_EOL . PHP_EOL);
             exit(1);
         } catch (\Exception $e) {
-            $this->logger->error($e->getMessage());
-            $this->logger->error($e->getTraceAsString());
+            $this->output->out($e->getMessage() . PHP_EOL . PHP_EOL);
+            $this->output->out($e->getTraceAsString() . PHP_EOL . PHP_EOL);
             exit(1);
         }
+    }
+
+    protected function startCommand()
+    {
+        $this->output->out(Chalk::dark_gray('… '));
+    }
+
+    protected function handleSuccess($message)
+    {
+        $this->output->out(
+            sprintf(
+                "\r%s %s" . PHP_EOL,
+                Chalk::green('✓'),
+                $message
+            )
+        );
+    }
+
+    protected function handleError($message, $debug_output)
+    {
+        $this->output->out(
+            sprintf(
+                "\r%s %s" . PHP_EOL . PHP_EOL . '%s' . PHP_EOL,
+                Chalk::red('✗'),
+                $message,
+                Chalk::style(
+                    $this->output->wrap(
+                        $debug_output,
+                        76,
+                        '  '
+                    ),
+                    new Style([ Style::DIM ])
+                )
+            )
+        );
+        exit(1);
     }
 }

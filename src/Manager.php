@@ -1,7 +1,5 @@
 <?php
 
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-
 namespace silverorange\PackageRelease;
 
 /**
@@ -16,6 +14,21 @@ class Manager
     const VERSION_MINOR = 'minor';
     const VERSION_PATCH = 'patch';
     const VERSION_MICRO = 'micro'; // deprecated alias for VERSION_PATCH
+
+    /**
+     * @var string
+     */
+    protected $last_error = '';
+
+    /**
+     * Gets the command output of the last failed command
+     *
+     * @return string
+     */
+    public function getLastError()
+    {
+        return $this->last_error;
+    }
 
     /**
      * Checks if the current directory is a git repository
@@ -127,7 +140,7 @@ class Manager
 
         // Fetch only the parent branch from the remote.
         $fetch_command = sprintf(
-            'git fetch -q %1$s %2$s:refs/remotes/%1$s/%2$s',
+            'git fetch -q %1$s %2$s:refs/remotes/%1$s/%2$s 2>&1',
             $escaped_remote,
             $escaped_parent
         );
@@ -136,9 +149,8 @@ class Manager
         $return = 0;
         exec($fetch_command, $output, $return);
         if ($return === 0) {
-
             $checkout_command = sprintf(
-                'git checkout -q -b %s %s/%s',
+                'git checkout -q -b %s %s/%s 2>&1',
                 $escaped_release,
                 $escaped_remote,
                 $escaped_parent
@@ -149,10 +161,11 @@ class Manager
             exec($checkout_command, $output, $return);
 
             if ($return !== 0) {
+                $this->last_error = implode(PHP_EOL, $output);
                 $release = null;
             }
-
         } else {
+            $this->last_error = implode(PHP_EOL, $output);
             $release = null;
         }
 
@@ -173,7 +186,7 @@ class Manager
         $escaped_message = escapeshellarg($message);
 
         $command = sprintf(
-            'git tag -a %s -m %s',
+            'git tag -a %s -m %s 2>&1',
             $escaped_version,
             $escaped_message
         );
@@ -181,6 +194,10 @@ class Manager
         $output = array();
         $return = 0;
         exec($command, $output, $return);
+
+        if ($return !== 0) {
+            $this->last_error = implode(PHP_EOL, $output);
+        }
 
         return ($return === 0);
     }
@@ -199,7 +216,7 @@ class Manager
         $escaped_remote = escapeshellarg($remote);
 
         $command = sprintf(
-            'git push -q %s %s',
+            'git push -q %s %s 2>&1',
             $escaped_remote,
             $escaped_tag
         );
@@ -207,6 +224,10 @@ class Manager
         $output = array();
         $return = 0;
         exec($command, $output, $return);
+
+        if ($return !== 0) {
+            $this->last_error = implode(PHP_EOL, $output);
+        }
 
         return ($return === 0);
     }
@@ -229,10 +250,14 @@ class Manager
 
         `git checkout -q @{-1}`;
 
-        $command = sprintf('git branch -D %s', $escaped_branch);
+        $command = sprintf('git branch -D %s 2>&1', $escaped_branch);
         $output = array();
         $return = 0;
         exec($command, $output, $return);
+
+        if ($return !== 0) {
+            $this->last_error = implode(PHP_EOL, $output);
+        }
 
         return ($return === 0);
     }

@@ -2,8 +2,6 @@
 
 namespace silverorange\PackageRelease;
 
-use Psr\Log;
-
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
@@ -13,13 +11,13 @@ use Psr\Log;
 class Prompt
 {
     /**
-     * @var Log\LoggerInterface $logger
+     * @var silverorange\PackageRelease\Output
      */
-    protected $logger = null;
+    protected $output = null;
 
-    public function __construct(Log\LoggerInterface $logger)
+    public function __construct(Output $output)
     {
-        $this->logger = $logger;
+        $this->output = $output;
     }
 
     /**
@@ -40,13 +38,14 @@ class Prompt
         $answered = false;
 
         $prompt = ($line2 === null) ? $line1 : $line2;
-        $this->logger->notice('');
+        $this->output->out(PHP_EOL);
 
         while (!$answered) {
             if ($line2 !== null) {
-                $this->logger->notice($line1);
+                $this->output->out($line1);
             }
-            $response = readline($prompt);
+            $this->output->out($prompt);
+            $response = readline();
             if (preg_match('/^y|yes$/i', $response) === 1) {
                 $response = true;
                 $answered = true;
@@ -54,7 +53,7 @@ class Prompt
                 $response = false;
                 $answered = true;
             }
-            $this->logger->notice('');
+            $this->output->out(PHP_EOL);
         }
 
         return $response;

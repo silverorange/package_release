@@ -1,8 +1,6 @@
 #!/usr/bin/php
 <?php
 
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
@@ -41,23 +39,14 @@ if ($autoloader === null) {
     require_once $autoloader;
 }
 
-use Monolog\Logger;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
-use Monolog\Processor\PsrLogMessageProcessor;
 use silverorange\PackageRelease;
 
-$output_handler = new StreamHandler('php://stdout', Logger::DEBUG);
-$output_handler->setFormatter(new LineFormatter('%message%' . PHP_EOL));
+$verbosity_handler = new PackageRelease\VerbosityHandler();
 
-$verbosity_handler = new PackageRelease\VerbosityHandler($output_handler);
-
-$logger = new Logger('package-release-cli');
-$logger->pushProcessor(new PsrLogMessageProcessor());
-$logger->pushHandler($verbosity_handler);
+$output = new PackageRelease\Output($verbosity_handler);
 
 $manager = new PackageRelease\Manager();
-$prompt = new PackageRelease\Prompt($logger);
+$prompt = new PackageRelease\Prompt($output);
 
 $parser = \Console_CommandLine::fromXmlFile(__DIR__ . '/../data/cli.xml');
 
@@ -65,7 +54,7 @@ $cli = new PackageRelease\CLI(
     $parser,
     $manager,
     $verbosity_handler,
-    $logger,
+    $output,
     $prompt
 );
 
