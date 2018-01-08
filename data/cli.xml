@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
 <command>
     <description>Command-line tool to release new versions of composer packages.</description>
-    <version>1.0.0</version>
+    <version>1.1.1</version>
     <option name="branch">
         <short_name>-b</short_name>
         <long_name>--branch</long_name>
