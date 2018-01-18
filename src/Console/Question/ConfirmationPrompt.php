@@ -20,7 +20,7 @@ class ConfirmationPrompt
      */
     protected $helper = null;
 
-    public function __construct(QuestionHelper $helper )
+    public function __construct(QuestionHelper $helper)
     {
         $this->setHelper($helper);
     }
