@@ -4,7 +4,6 @@ namespace Silverorange\PackageRelease\Console\Formatter;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 /**
  * @package   PackageRelease
@@ -38,7 +37,7 @@ class Style
 
         $output->getFormatter()->setStyle(
             'waiting',
-            new OutputFormatterStyle()
+            new OutputFormatterStyle('gray')
         );
 
         $output->getFormatter()->setStyle(
@@ -59,6 +58,11 @@ class Style
         $output->getFormatter()->setStyle(
             'prompt',
             new OutputFormatterStyle('yellow')
+        );
+
+        $output->getFormatter()->setStyle(
+            'output',
+            new OutputFormatterStyle(null, null, ['dim'])
         );
     }
 }

@@ -12,6 +12,7 @@ use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Silverorange\PackageRelease\Git\Manager;
 use Silverorange\PackageRelease\Console\Formatter\Style;
+use Silverorange\PackageRelease\Console\Formatter\LineWrapper;
 use Silverorange\PackageRelease\Console\Question\ConfirmationPrompt;
 
 /**
@@ -174,17 +175,6 @@ class PackageReleaseCommand extends Command
                 )
             );
 
-            /*$continue = $this->prompt->ask(
-                sprintf(
-                    'Ready to release new %s version %s. '
-                    . 'Continue? %s' . PHP_EOL,
-                    $result->options['type'],
-                    Chalk::magenta($next_version),
-                    Chalk::yellow('[Y/N]')
-                ),
-                Chalk::yellow('> ')
-            );*/
-
             if (!$continue) {
                 $output->writeln([
                     '<bold>Got it. Not releasing.</bold>',
@@ -341,21 +331,15 @@ class PackageReleaseCommand extends Command
             ''
         ]);
 
-// TODO
-        /*
-                Chalk::style(
-                    $this->output->wrap(
-                        $debug_output,
-                        76,
-                        '  '
-                    ),
-                    new Style([ Style::DIM ])
-                )
-            )
-        );
-        */
+        $wrapped_lines = (new LineWrapper())->wrap($debug_output, 76, '  ');
+        $output->writeln(array_map(function ($line) {
+            return sprintf(
+                '<output>%s</output>',
+                OutputFormatter::escape($line)
+            );
+        }, $wrapped_lines));
+        $output->writeln('');
 
-        // END TODO
         exit(1);
     }
 }
