@@ -47,7 +47,7 @@ class ConfirmationPrompt
         InputInterface $input,
         OutputInterface $output,
         string $message
-    ) {
+    ): bool {
         $answered = false;
 
         $output->writeln('');

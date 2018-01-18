@@ -25,7 +25,7 @@ class Manager
      *
      * @return string
      */
-    public function getLastError()
+    public function getLastError(): array
     {
         return $this->last_error;
     }
@@ -36,7 +36,7 @@ class Manager
      * @return boolean true if the current directory is a git repository,
      *                 otherwise false.
      */
-    public function isInGitRepo()
+    public function isInGitRepo(): bool
     {
         $package_git_repo = `git rev-parse --is-inside-work-tree 2>/dev/null`;
         return (trim($package_git_repo) === 'true');
@@ -48,7 +48,7 @@ class Manager
      * @return boolean true if the current directory is a composer package,
      *                 otherwise false.
      */
-    public function isComposerPackage()
+    public function isComposerPackage(): bool
     {
         return (file_exists('composer.json') && is_readable('composer.json'));
     }
@@ -59,7 +59,7 @@ class Manager
      * @return string the name of the current git repository or null if it
      *                could not be determined.
      */
-    public function getRepoName()
+    public function getRepoName(): string
     {
         $repo = null;
 
@@ -82,7 +82,7 @@ class Manager
      * @return string the name of the current composer package or null if the
      *                name could not be parsed from the composer.json file.
      */
-    public function getComposerPackageName()
+    public function getComposerPackageName(): string
     {
         $name = null;
 
@@ -102,7 +102,7 @@ class Manager
      * @return string the remote name, or null if no such remote exists in the
      *                git repository.
      */
-    public function getRemoteByUrl(string $url)
+    public function getRemoteByUrl(string $url): string
     {
         $the_remote = null;
 
@@ -134,7 +134,7 @@ class Manager
         string $parent,
         string $remote,
         string $version
-    ) {
+    ): string {
         $release = 'release-' . str_replace('.', '-', $version);
 
         $escaped_remote = escapeshellarg($remote);
@@ -183,7 +183,7 @@ class Manager
      *
      * @return true on success, false on failure.
      */
-    public function createReleaseTag(string $version, string $message)
+    public function createReleaseTag(string $version, string $message): bool
     {
         $escaped_version = escapeshellarg($version);
         $escaped_message = escapeshellarg($message);
@@ -213,7 +213,7 @@ class Manager
      *
      * @return true on success, false on failure.
      */
-    public function pushTagToRemote(string $tag, string $remote)
+    public function pushTagToRemote(string $tag, string $remote): bool
     {
         $escaped_tag = escapeshellarg($tag);
         $escaped_remote = escapeshellarg($remote);
@@ -242,7 +242,7 @@ class Manager
      *
      * @return true on success, false on failure.
      */
-    public function deleteBranch(string $branch)
+    public function deleteBranch(string $branch): bool
     {
         if ($branch === 'master') {
             // can't delete master
@@ -273,7 +273,7 @@ class Manager
      * @return string the most recent version tag, or 0.0.0 if no release
      *                exists.
      */
-    public function getCurrentVersionFromRemote(string $remote)
+    public function getCurrentVersionFromRemote(string $remote): string
     {
         $remote = escapeshellarg($remote);
 
@@ -335,7 +335,7 @@ class Manager
     public function getNextVersion(
         string $current_version,
         string $type = self::VERSION_MINOR
-    ) {
+    ): string {
         $parts = explode('.', $current_version);
 
         if (count($parts) !== 3) {

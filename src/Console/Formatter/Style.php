@@ -13,8 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Style
 {
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    public function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ): void {
         $output->getFormatter()->setStyle(
             'variable',
             new OutputFormatterStyle('magenta')

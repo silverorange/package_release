@@ -14,7 +14,7 @@ class LineWrapper
         array $lines,
         int $width = 70,
         string $indent = ' '
-    ) {
+    ): array {
         // Match anything 1 to $width chars long followed by whitespace or EOS,
         // otherwise match anything $width chars long
         $search = '/(.{1,' . $width . '})(?:\s|$)|(.{' . $width . '})/uS';

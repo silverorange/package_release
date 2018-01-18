@@ -303,13 +303,15 @@ class PackageReleaseCommand extends Command
         ]);
     }
 
-    protected function startCommand(OutputInterface $output)
+    protected function startCommand(OutputInterface $output): void
     {
         $output->write('<waiting>…</waiting> ');
     }
 
-    protected function handleSuccess(OutputInterface $output, string $message)
-    {
+    protected function handleSuccess(
+        OutputInterface $output,
+        string $message
+    ): void {
         $output->writeln(
             sprintf(
                 "\r<success>✓</success> %s",
@@ -322,7 +324,7 @@ class PackageReleaseCommand extends Command
         OutputInterface $output,
         string $message,
         array $debug_output
-    ) {
+    ): void {
         $output->writeln([
             sprintf(
                 "\r<failure>✗</failure> %s",
