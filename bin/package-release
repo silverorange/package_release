@@ -44,11 +44,11 @@ if ($autoloader === null) {
 use Symfony\Component\Console\Application;
 use Silverorange\PackageRelease\Git\Manager;
 use Silverorange\PackageRelease\Console\Command\PackageReleaseCommand;
+use Silverorange\PackageRelease\Console\Formatter\Style;
 
 $application = new Application('Package Release', '1.1.0');
 
-$manager = new Manager();
-$releaseCommand = new PackageReleaseCommand($manager);
+$releaseCommand = new PackageReleaseCommand(new Manager(), new Style());
 
 $application->add($releaseCommand);
 $application->setDefaultCommand($releaseCommand->getName(), true);

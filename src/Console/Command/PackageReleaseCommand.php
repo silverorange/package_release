@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Silverorange\PackageRelease\Git\Manager;
+use Silverorange\PackageRelease\Console\Formatter\Style;
 use Silverorange\PackageRelease\Console\Question\ConfirmationPrompt;
 
 /**
@@ -26,15 +27,26 @@ class PackageReleaseCommand extends Command
      */
     protected $manager = null;
 
-    public function __construct(Manager $manager)
+    /**
+     * @var Silverorange\PackageRelease\Style
+     */
+    protected $style = null;
+
+    public function __construct(Manager $manager, Style $style)
     {
         parent::__construct();
         $this->setManager($manager);
+        $this->setStyle($style);
     }
 
     public function setManager(Manager $manager)
     {
         $this->manager = $manager;
+    }
+
+    public function setStyle(Style $style)
+    {
+        $this->style = $style;
     }
 
     protected function configure()
@@ -84,50 +96,7 @@ class PackageReleaseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->getFormatter()->setStyle(
-            'variable',
-            new OutputFormatterStyle('magenta')
-        );
-
-        $output->getFormatter()->setStyle(
-            'tip',
-            new OutputFormatterStyle('cyan')
-        );
-
-        $output->getFormatter()->setStyle(
-            'header',
-            new OutputFormatterStyle(null, null, ['bold', 'underscore'])
-        );
-
-        $output->getFormatter()->setStyle(
-            'link',
-            new OutputFormatterStyle('blue')
-        );
-
-        $output->getFormatter()->setStyle(
-            'waiting',
-            new OutputFormatterStyle()
-        );
-
-        $output->getFormatter()->setStyle(
-            'success',
-            new OutputFormatterStyle('green')
-        );
-
-        $output->getFormatter()->setStyle(
-            'failure',
-            new OutputFormatterStyle('red')
-        );
-
-        $output->getFormatter()->setStyle(
-            'bold',
-            new OutputFormatterStyle(null, null, ['bold'])
-        );
-
-        $output->getFormatter()->setStyle(
-            'prompt',
-            new OutputFormatterStyle('yellow')
-        );
+        $this->style->execute($input, $output);
 
         if (!$this->manager->isInGitRepo()) {
             $output->writeln([
