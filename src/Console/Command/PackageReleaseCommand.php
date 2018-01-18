@@ -3,6 +3,7 @@
 namespace Silverorange\PackageRelease\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -97,6 +98,7 @@ class PackageReleaseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->validateInputOptions($input, $output);
         $this->style->execute($input, $output);
 
         if (!$this->manager->isInGitRepo()) {
@@ -301,6 +303,23 @@ class PackageReleaseCommand extends Command
             . '<link>https://composer/</link>.',
             ''
         ]);
+    }
+
+    protected function validateInputOptions(
+        InputInterface $input,
+        OutputInterface $output
+    ): void {
+        $type = $input->getOption('type');
+
+        if (!in_array($type, ['major', 'minor', 'patch', 'micro'])) {
+            throw new InvalidOptionException(
+                sprintf(
+                    'Option "type" must be one of the following: "major", '
+                    . '"minor", "patch" (got "%s").',
+                    $type
+                )
+            );
+        }
     }
 
     protected function startCommand(OutputInterface $output): void
