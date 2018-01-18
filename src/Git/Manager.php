@@ -1,11 +1,11 @@
 <?php
 
-namespace silverorange\PackageRelease;
+namespace Silverorange\PackageRelease\Git;
 
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2016 silverorange
+ * @copyright 2016-2018 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class Manager
@@ -18,7 +18,7 @@ class Manager
     /**
      * @var string
      */
-    protected $last_error = '';
+    protected $last_error = [];
 
     /**
      * Gets the command output of the last failed command
@@ -102,7 +102,7 @@ class Manager
      * @return string the remote name, or null if no such remote exists in the
      *                git repository.
      */
-    public function getRemoteByUrl($url)
+    public function getRemoteByUrl(string $url)
     {
         $the_remote = null;
 
@@ -130,8 +130,11 @@ class Manager
      * @return string the name of the new branch, or null if the branch could
      *                not be created.
      */
-    public function createReleaseBranch($parent, $remote, $version)
-    {
+    public function createReleaseBranch(
+        string $parent,
+        string $remote,
+        string $version
+    ) {
         $release = 'release-' . str_replace('.', '-', $version);
 
         $escaped_remote = escapeshellarg($remote);
@@ -161,11 +164,11 @@ class Manager
             exec($checkout_command, $output, $return);
 
             if ($return !== 0) {
-                $this->last_error = implode(PHP_EOL, $output);
+                $this->last_error = $output;
                 $release = null;
             }
         } else {
-            $this->last_error = implode(PHP_EOL, $output);
+            $this->last_error = $output;
             $release = null;
         }
 
@@ -180,7 +183,7 @@ class Manager
      *
      * @return true on success, false on failure.
      */
-    public function createReleaseTag($version, $message)
+    public function createReleaseTag(string $version, string $message)
     {
         $escaped_version = escapeshellarg($version);
         $escaped_message = escapeshellarg($message);
@@ -196,7 +199,7 @@ class Manager
         exec($command, $output, $return);
 
         if ($return !== 0) {
-            $this->last_error = implode(PHP_EOL, $output);
+            $this->last_error = $output;
         }
 
         return ($return === 0);
@@ -210,7 +213,7 @@ class Manager
      *
      * @return true on success, false on failure.
      */
-    public function pushTagToRemote($tag, $remote)
+    public function pushTagToRemote(string $tag, string $remote)
     {
         $escaped_tag = escapeshellarg($tag);
         $escaped_remote = escapeshellarg($remote);
@@ -223,10 +226,10 @@ class Manager
 
         $output = array();
         $return = 0;
-        exec($command, $output, $return);
+        //exec($command, $output, $return);
 
         if ($return !== 0) {
-            $this->last_error = implode(PHP_EOL, $output);
+            $this->last_error = $output;
         }
 
         return ($return === 0);
@@ -239,7 +242,7 @@ class Manager
      *
      * @return true on success, false on failure.
      */
-    public function deleteBranch($branch)
+    public function deleteBranch(string $branch)
     {
         if ($branch === 'master') {
             // can't delete master
@@ -256,7 +259,7 @@ class Manager
         exec($command, $output, $return);
 
         if ($return !== 0) {
-            $this->last_error = implode(PHP_EOL, $output);
+            $this->last_error = $output;
         }
 
         return ($return === 0);
@@ -270,7 +273,7 @@ class Manager
      * @return string the most recent version tag, or 0.0.0 if no release
      *                exists.
      */
-    public function getCurrentVersionFromRemote($remote)
+    public function getCurrentVersionFromRemote(string $remote)
     {
         $remote = escapeshellarg($remote);
 
@@ -318,20 +321,20 @@ class Manager
      * Gets the next version for a release based on the specified version and
      * release type
      *
-     * @param string  $current_version the version of the current release.
-     * @param integer $type            optional. The release type. Should be
-     *                                 one of
-     *                                 {@link PackageRelease::VERSION_MAJOR},
-     *                                 {@link PackageRelease::VERSION_MINOR}, or
-     *                                 {@link PackageRelease::VERSION_PATCH}. If
-     *                                 not specified, a minor release is
-     *                                 used.
+     * @param string $current_version the version of the current release.
+     * @param string $type            optional. The release type. Should be
+     *                                one of
+     *                                {@link PackageRelease::VERSION_MAJOR},
+     *                                {@link PackageRelease::VERSION_MINOR}, or
+     *                                {@link PackageRelease::VERSION_PATCH}. If
+     *                                not specified, a minor release is
+     *                                used.
      *
      * @return string the next release version.
      */
     public function getNextVersion(
-        $current_version,
-        $type = self::VERSION_MINOR
+        string $current_version,
+        string $type = self::VERSION_MINOR
     ) {
         $parts = explode('.', $current_version);
 
