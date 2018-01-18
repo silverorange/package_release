@@ -1,12 +1,14 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2016 silverorange
+ * @copyright 2016-2018 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
+
+namespace Silverorange\PackageRelease;
 
 $autoloadPaths = array(
     // Try to load autoloader if this is the root project.
@@ -39,23 +41,16 @@ if ($autoloader === null) {
     require_once $autoloader;
 }
 
-use silverorange\PackageRelease;
+use Symfony\Component\Console\Application;
+use Silverorange\PackageRelease\Git\Manager;
+use Silverorange\PackageRelease\Console\Command\PackageReleaseCommand;
+use Silverorange\PackageRelease\Console\Formatter\Style;
 
-$verbosity_handler = new PackageRelease\VerbosityHandler();
+$application = new Application('Package Release', '1.1.0');
 
-$output = new PackageRelease\Output($verbosity_handler);
+$releaseCommand = new PackageReleaseCommand(new Manager(), new Style());
 
-$manager = new PackageRelease\Manager();
-$prompt = new PackageRelease\Prompt($output);
+$application->add($releaseCommand);
+$application->setDefaultCommand($releaseCommand->getName(), true);
 
-$parser = \Console_CommandLine::fromXmlFile(__DIR__ . '/../data/cli.xml');
-
-$cli = new PackageRelease\CLI(
-    $parser,
-    $manager,
-    $verbosity_handler,
-    $output,
-    $prompt
-);
-
-$cli->run();
+$application->run();
