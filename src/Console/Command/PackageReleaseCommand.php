@@ -162,9 +162,7 @@ class PackageReleaseCommand extends Command
         );
 
         // Prompt to continue release.
-        if ($input->isInteractive() &&
-            !$output->isQuiet()
-        ) {
+        if ($input->isInteractive() && !$output->isQuiet()) {
             $prompt = new ConfirmationPrompt($this->getHelper('question'));
             $continue = $prompt->ask(
                 $input,
