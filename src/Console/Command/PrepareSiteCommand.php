@@ -15,14 +15,20 @@ use Silverorange\PackageRelease\Git\Manager;
 use Silverorange\PackageRelease\Console\Formatter\Style;
 use Silverorange\PackageRelease\Console\Formatter\LineWrapper;
 use Silverorange\PackageRelease\Console\Question\ConfirmationPrompt;
-
+use Silverorange\PackageRelease\Builder\BuilderInterface;
+use Silverorange\PackageRelease\Builder\EmberBuilder;
+use Silverorange\PackageRelease\Builder\LaravelBuilder;
+use Silverorange\PackageRelease\Builder\LegacyPHPBuilder;
+use Silverorange\PackageRelease\Builder\NodeBuilder;
+use Silverorange\PackageRelease\Builder\ReactBuilder;
+use Silverorange\PackageRelease\Builder\StaticBuilder;
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
  * @copyright 2017-2018 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
-class PackageReleaseCommand extends Command
+class PrepareSiteCommand extends Command
 {
     /**
      * @var Silverorange\PackageRelease\Manager
@@ -55,17 +61,17 @@ class PackageReleaseCommand extends Command
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('package-release')
+            ->setName('prepare-site')
 
             // the short description shown while running "php bin/console list"
-            ->setDescription('Releases new versions of composer packages.')
+            ->setDescription('Prepares a release-branch of a site for testing.')
 
             // the full command description shown when running the command with
             // the "--help" option
             ->setHelp(
-                'This tool is used to release new versions of composer '
-                . 'packages. It uses Semver 2.0 to automatically pick the '
-                . 'next version number and tag the release on GitHub.'
+                'Prepares a release-branch of a site for testing and release. '
+                . 'Must be used in a site’s live directory. This script '
+                . 'should be run before <comment>release-site</comment>.'
             )
             ->setDefinition(
                 new InputDefinition(array(
@@ -75,12 +81,6 @@ class PackageReleaseCommand extends Command
                         InputOption::VALUE_REQUIRED,
                         'Remote branch to use for release.',
                         'master'
-                    ),
-                    new InputOption(
-                        'message',
-                        'm',
-                        InputOption::VALUE_REQUIRED,
-                        'Message to use for the release tag.'
                     ),
                     new InputOption(
                         'type',
@@ -104,16 +104,6 @@ class PackageReleaseCommand extends Command
         if (!$this->manager->isInGitRepo()) {
             $output->writeln([
                 'This tool must be run from a git repository.',
-                '',
-            ]);
-            return 1;
-        }
-
-        if (!$this->manager->isComposerPackage()) {
-            $output->writeln([
-                'Could not find <variable>composer.json</variable>. Make '
-                . 'sure you are in the project '
-                . 'root and the project is a composer package.',
                 '',
             ]);
             return 1;
@@ -161,33 +151,9 @@ class PackageReleaseCommand extends Command
             $current_version,
             $input->getOption('type')
         );
-
-        // Prompt to continue release.
-        if ($input->isInteractive() && !$output->isQuiet()) {
-            $prompt = new ConfirmationPrompt($this->getHelper('question'));
-            $continue = $prompt->ask(
-                $input,
-                $output,
-                sprintf(
-                    'Ready to release new %s version <variable>%s</variable>. '
-                    . 'Continue? <prompt>[Y/N]</prompt>',
-                    $input->getOption('type'),
-                    OutputFormatter::escape($next_version)
-                )
-            );
-
-            if (!$continue) {
-                $output->writeln([
-                    '<bold>Got it. Not releasing.</bold>',
-                    ''
-                ]);
-                return 0;
-            }
-        }
-
         $output->writeln([
             sprintf(
-                '<header>Releasing version %s:</header>',
+                '<header>Preparing release branch for version %s:</header>',
                 OutputFormatter::escape($next_version)
             ),
             '',
@@ -210,7 +176,6 @@ class PackageReleaseCommand extends Command
                 ),
                 $this->manager->getLastError()
             );
-            return 1;
         } else {
             $this->handleSuccess(
                 $output,
@@ -221,91 +186,49 @@ class PackageReleaseCommand extends Command
             );
         }
 
-        $message = $input->getOption('message');
-        if ($message === '') {
-            $message = sprintf(
-                'Release version %s.',
-                $next_version
-            );
-        }
-        $this->startCommand($output);
-        $success = $this->manager->createReleaseTag(
-            $next_version,
-            $message
-        );
-        if ($success) {
-            $this->handleSuccess(
-                $output,
-                sprintf(
-                    'tagged release with message <variable>%s</variable>',
-                    OutputFormatter::escape($message)
-                )
-            );
-        } else {
-            $this->handleError(
-                $output,
-                sprintf(
-                    'failed to create release tag for <variable>%s</variable>',
-                    OutputFormatter::escape($next_version)
-                ),
-                $this->manager->getLastError()
-            );
-            return 1;
-        }
-
-        $this->startCommand($output);
-        if ($this->manager->pushTagToRemote($next_version, $remote)) {
-            $this->handleSuccess(
-                $output,
-                sprintf(
-                    'pushed tag to <variable>%s</variable>',
-                    OutputFormatter::escape($remote)
-                )
-            );
-        } else {
-            $this->handleError(
-                $output,
-                sprintf(
-                    'could not push tag <variable>%s</variable> to remote '
-                    . '<variable>%s</variable>',
-                    OutputFormatter::escape($next_version),
-                    OutputFormatter::escape($remote)
-                ),
-                $this->manager->getLastError()
-            );
-            return 1;
-        }
-
-        $this->startCommand($output);
-        if ($this->manager->deleteBranch($release_branch)) {
-            $this->handleSuccess(
-                $output,
-                sprintf(
-                    'removed release branch <variable>%s</variable>',
-                    OutputFormatter::escape($release_branch)
-                )
-            );
-        } else {
-            $this->handleError(
-                $output,
-                sprintf(
-                    'could not delete release branch <variable>%s</variable>',
-                    OutputFormatter::escape($release_branch)
-                ),
-                $this->manager->getLastError()
-            );
-            return 1;
-        }
-
+        $builder = $this->getBuilder();
         $output->writeln([
             '',
-            '<info>Success!</info>',
+            sprintf(
+                '<header>Building %s project:</header>',
+                OutputFormatter::escape($builder->getTitle())
+            ),
             '',
-            'The composer repository will automatically update. It may take a '
-            . 'few minutes for the release to appear at '
-            . '<link>https://composer/</link>.',
-            ''
         ]);
+
+        if ($builder->build($output)) {
+            $output->writeln([
+                '',
+                sprintf(
+                    '<info>%s project built successfully!</info>',
+                    OutputFormatter::escape($builder->getTitle())
+                ),
+                '',
+                sprintf(
+                    'The site is ready to test at <link>%s</link>. If testing is '
+                    . 'successful, the site may be released using the '
+                    . '<variable>release-site</variable> tool.',
+                    OutputFormatter::escape($this->getTestingURL())
+                ),
+                '',
+                sprintf(
+                    'Automated tests may be run with <variable>%s</variable>',
+                    OutputFormatter::escape($this->getTestingCommand())
+                ),
+                '',
+                'If testing fails, you can revert back to the live branch:',
+                '  <variable>git checkout live</variable>',
+                sprintf(
+                    '  <variable>git branch -D %s</variable>',
+                    OutputFormatter::escape($release_branch)
+                ),
+                '',
+            ]);
+        } else {
+            return 1;
+        }
+
+        return 0;
     }
 
     protected function validateInputOptions(
@@ -323,6 +246,42 @@ class PackageReleaseCommand extends Command
                 )
             );
         }
+    }
+
+    protected function getTestingCommand(): string
+    {
+        //return 'yarn test';
+        //return 'npm test';
+        //return 'ember test';
+        return 'composer run test';
+    }
+
+    protected function getTestingURL(): string
+    {
+        return 'https://www.google.com';
+    }
+
+    protected function getBuilder(): BuilderInterface
+    {
+        // Order is important. First appropriate builder is used.
+        $builders = [
+            new LaravelBuilder(),
+            new LegacyPHPBuilder(),
+            new EmberBuilder(),
+            new ReactBuilder(),
+            new NodeBuilder(),
+            new StaticBuilder(),
+        ];
+
+        $found_builder = false;
+        foreach ($builders as $builder) {
+            if ($builder->isAppropriate()) {
+                return $builder;
+            }
+        }
+
+        // Fall back to static site (no build process).
+        return new StaticBuilder();
     }
 
     protected function startCommand(OutputInterface $output): void
@@ -363,5 +322,7 @@ class PackageReleaseCommand extends Command
             );
         }, $wrapped_lines));
         $output->writeln('');
+
+        exit(1);
     }
 }

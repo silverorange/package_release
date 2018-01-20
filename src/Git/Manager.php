@@ -102,7 +102,7 @@ class Manager
      * @return string the remote name, or null if no such remote exists in the
      *                git repository.
      */
-    public function getRemoteByUrl(string $url): string
+    public function getRemoteByUrl(string $url)
     {
         $the_remote = null;
 
@@ -134,7 +134,7 @@ class Manager
         string $parent,
         string $remote,
         string $version
-    ): string {
+    ) {
         $release = 'release-' . str_replace('.', '-', $version);
 
         $escaped_remote = escapeshellarg($remote);

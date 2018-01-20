@@ -14,7 +14,10 @@
     "require": {
         "php": ">=7.1.0",
         "ext-json": "*",
-        "symfony/console": "^4.0"
+        "ext-mbstring": "*",
+        "symfony/console": "^4.0",
+        "symfony/lock": "^4.0",
+        "symfony/process": "^4.0"
     },
     "require-dev": {
         "silverorange/coding-standard": "^0.7.0"
