@@ -164,7 +164,8 @@ class PrepareSiteCommand extends Command
         $release_branch = $this->manager->createReleaseBranch(
             $branch,
             $remote,
-            $next_version
+            $next_version,
+            $input->getOption('type') === 'patch' ? 'patch' : 'release'
         );
         if ($release_branch === null) {
             $this->handleError(
@@ -176,6 +177,7 @@ class PrepareSiteCommand extends Command
                 ),
                 $this->manager->getLastError()
             );
+            return 1;
         } else {
             $this->handleSuccess(
                 $output,
@@ -204,12 +206,32 @@ class PrepareSiteCommand extends Command
                     OutputFormatter::escape($builder->getTitle())
                 ),
                 '',
-                sprintf(
-                    'The site is ready to test at <link>%s</link>. If testing is '
-                    . 'successful, the site may be released using the '
-                    . '<variable>release-site</variable> tool.',
-                    OutputFormatter::escape($this->getTestingURL())
-                ),
+            ]);
+
+            if ($this->getOption('type') === 'patch') {
+                $output->writeln([
+                    'This is a patch release. Make and commit any required '
+                    . 'changes to this branch before testing.',
+                    ''
+                    sprintf(
+                        'The site is can be tested at <link>%s</link>. If '
+                        . 'testing is successful, the site may be released '
+                        . 'using the <variable>release-site</variable> tool.',
+                        OutputFormatter::escape($this->getTestingURL())
+                    ),
+                ]);
+            } else {
+                $output->writeln([
+                    sprintf(
+                        'The site is ready to test at <link>%s</link>. If '
+                        . 'testing is successful, the site may be released '
+                        . 'using the <variable>release-site</variable> tool.',
+                        OutputFormatter::escape($this->getTestingURL())
+                    )
+                ]);
+            }
+
+            $output->writeln([
                 '',
                 sprintf(
                     'Automated tests may be run with <variable>%s</variable>',
@@ -322,7 +344,5 @@ class PrepareSiteCommand extends Command
             );
         }, $wrapped_lines));
         $output->writeln('');
-
-        exit(1);
     }
 }

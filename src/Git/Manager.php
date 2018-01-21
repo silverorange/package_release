@@ -133,9 +133,10 @@ class Manager
     public function createReleaseBranch(
         string $parent,
         string $remote,
-        string $version
+        string $version,
+        string $prefix = 'release'
     ) {
-        $release = 'release-' . str_replace('.', '-', $version);
+        $release = $prefix . '-' . str_replace('.', '-', $version);
 
         $escaped_remote = escapeshellarg($remote);
         $escaped_parent = escapeshellarg($parent);
