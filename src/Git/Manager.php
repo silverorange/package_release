@@ -63,7 +63,7 @@ class Manager
     {
         $repo = null;
 
-        $remotes = explode(PHP_EOL}, `git remote -v`);
+        $remotes = explode(PHP_EOL, `git remote -v`);
         $matches = array();
         $exp = '/^origin\s+.*\/([a-zA-Z0-9_-]+)\.git\s+\((?:fetch|push)\)$/';
         foreach ($remotes as $remote) {

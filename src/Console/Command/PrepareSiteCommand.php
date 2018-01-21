@@ -22,6 +22,7 @@ use Silverorange\PackageRelease\Builder\LegacyPHPBuilder;
 use Silverorange\PackageRelease\Builder\NodeBuilder;
 use Silverorange\PackageRelease\Builder\ReactBuilder;
 use Silverorange\PackageRelease\Builder\StaticBuilder;
+
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
