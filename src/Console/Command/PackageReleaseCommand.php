@@ -41,17 +41,19 @@ class PackageReleaseCommand extends Command
         $this->setStyle($style);
     }
 
-    public function setManager(Manager $manager)
+    public function setManager(Manager $manager): self
     {
         $this->manager = $manager;
+        return $this;
     }
 
-    public function setStyle(Style $style)
+    public function setStyle(Style $style): self
     {
         $this->style = $style;
+        return $this;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             // the name of the command (the part after "bin/console")
@@ -96,8 +98,10 @@ class PackageReleaseCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
         $this->validateInputOptions($input, $output);
         $this->style->execute($input, $output);
 

@@ -4,7 +4,7 @@ namespace Silverorange\PackageRelease\Tool;
 
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Bower extends Base
+class Bower
 {
     public static function install(OutputInterface $output): bool
     {

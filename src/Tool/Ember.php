@@ -5,7 +5,7 @@ namespace Silverorange\PackageRelease\Tool;
 use Symfony\Component\Console\Output\OutputInterface;
 use Silverorange\PackageRelease\Console\ProcessRunner;
 
-class Ember extends Base
+class Ember
 {
     public static function build(OutputInterface $output): bool
     {

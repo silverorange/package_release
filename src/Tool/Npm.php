@@ -5,7 +5,7 @@ namespace Silverorange\PackageRelease\Tool;
 use Symfony\Component\Console\Output\OutputInterface;
 use Silverorange\PackageRelease\Console\ProcessRunner;
 
-class Npm extends Base
+class Npm
 {
     public static function install(OutputInterface $output): bool
     {
