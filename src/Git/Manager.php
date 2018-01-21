@@ -63,7 +63,7 @@ class Manager
     {
         $repo = null;
 
-        $remotes = explode("\n", `git remote -v`);
+        $remotes = explode(PHP_EOL}, `git remote -v`);
         $matches = array();
         $exp = '/^origin\s+.*\/([a-zA-Z0-9_-]+)\.git\s+\((?:fetch|push)\)$/';
         foreach ($remotes as $remote) {
@@ -106,10 +106,10 @@ class Manager
     {
         $the_remote = null;
 
-        $remotes = explode("\n", `git remote`);
+        $remotes = explode(PHP_EOL, `git remote`);
         foreach ($remotes as $remote) {
             $escaped_remote = escapeshellarg($remote);
-            $info = explode("\n", `git remote show -n $escaped_remote`);
+            $info = explode(PHP_EOL, `git remote show -n $escaped_remote`);
             $expression = sprintf('/^  Fetch URL: %s/', preg_quote($url, '/'));
             if (preg_match($expression, $info[1]) === 1) {
                 $the_remote = $remote;
@@ -280,7 +280,7 @@ class Manager
 
         // get remote tags
         $tags = `git ls-remote --tags --refs $remote`;
-        $tags = explode("\n", $tags);
+        $tags = explode(PHP_EOL, $tags);
 
         // filter out version rows and strip out commit ids
         $tags = array_filter(
