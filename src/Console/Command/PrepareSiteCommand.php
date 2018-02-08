@@ -236,12 +236,19 @@ class PrepareSiteCommand extends Command
                 ]);
             }
 
+            $testingCommand = $this->getTestingCommand($builder);
+            if ($testingCommand != '') {
+                $output->writeln([
+                    '',
+                    sprintf(
+                        'Automated tests may be run with '
+                        . '<variable>%s</variable>',
+                        OutputFormatter::escape($testingCommand)
+                    ),
+                ]);
+            }
+
             $output->writeln([
-                '',
-                sprintf(
-                    'Automated tests may be run with <variable>%s</variable>',
-                    OutputFormatter::escape($this->getTestingCommand())
-                ),
                 '',
                 'If testing fails, you can revert back to the live branch:',
                 '  <variable>git checkout live</variable>',
@@ -275,7 +282,7 @@ class PrepareSiteCommand extends Command
         }
     }
 
-    protected function getTestingCommand(): string
+    protected function getTestingCommand(BuilderInterface $builder): string
     {
         //return 'yarn test';
         //return 'npm test';
