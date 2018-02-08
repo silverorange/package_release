@@ -152,9 +152,14 @@ class PrepareSiteCommand extends Command
             ]);
         }
 
+        $type = $input->getOption('type');
+        if ($type === 'hot') { // support deprecated 'hot' release type.
+            $type = 'patch';
+        }
+
         $next_version = $this->manager->getNextVersion(
             $current_version,
-            $input->getOption('type')
+            $type
         );
         $output->writeln([
             sprintf(
@@ -170,7 +175,7 @@ class PrepareSiteCommand extends Command
             $branch,
             $remote,
             $next_version,
-            $input->getOption('type') === 'patch' ? 'patch' : 'release'
+            ($type === 'patch') ? 'patch' : 'release'
         );
         if ($release_branch === null) {
             $this->handleError(
@@ -271,7 +276,7 @@ class PrepareSiteCommand extends Command
     ): void {
         $type = $input->getOption('type');
 
-        if (!in_array($type, ['major', 'minor', 'patch', 'micro'])) {
+        if (!in_array($type, ['major', 'minor', 'patch', 'hot'])) {
             throw new InvalidOptionException(
                 sprintf(
                     'Option "type" must be one of the following: "major", '
