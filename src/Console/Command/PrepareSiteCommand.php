@@ -83,7 +83,7 @@ class PrepareSiteCommand extends Command
                         'b',
                         InputOption::VALUE_REQUIRED,
                         'Remote branch to use for release.',
-                        'master'
+                        'live'
                     ),
                     new InputOption(
                         'type',
