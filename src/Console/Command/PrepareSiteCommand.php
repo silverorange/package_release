@@ -79,13 +79,6 @@ class PrepareSiteCommand extends Command
             ->setDefinition(
                 new InputDefinition(array(
                     new InputOption(
-                        'branch',
-                        'b',
-                        InputOption::VALUE_REQUIRED,
-                        'Remote branch to use for release.',
-                        'live'
-                    ),
-                    new InputOption(
                         'type',
                         't',
                         InputOption::VALUE_REQUIRED,
@@ -169,7 +162,7 @@ class PrepareSiteCommand extends Command
             '',
         ]);
 
-        $branch = $input->getOption('branch');
+        $branch = ($type === 'patch') ? 'live' : 'master';
         $this->startCommand($output);
         $release_branch = $this->manager->createReleaseBranch(
             $branch,
