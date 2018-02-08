@@ -165,8 +165,8 @@ class PrepareSiteCommand extends Command
         );
         $output->writeln([
             sprintf(
-                '<header>Preparing release branch of <variable>%s</variable> '
-                . 'for version %s:</header>',
+                '<header>Preparing release branch of %s for version '
+                . '%s:</header>',
                 OutputFormatter::escape($this->getSiteTitle()),
                 OutputFormatter::escape($next_version)
             ),
