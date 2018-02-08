@@ -4,6 +4,12 @@ namespace Silverorange\PackageRelease\Tool;
 
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @package   PackageRelease
+ * @author    Michael Gauthier <mike@silverorange.com>
+ * @copyright 2018 silverorange
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ */
 class Bower
 {
     public static function install(OutputInterface $output): bool
