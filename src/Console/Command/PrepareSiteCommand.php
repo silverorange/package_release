@@ -95,7 +95,7 @@ class PrepareSiteCommand extends Command
     protected function execute(
         InputInterface $input,
         OutputInterface $output
-    ): void {
+    ): int {
         $this->validateInputOptions($input, $output);
         $this->style->execute($input, $output);
 
@@ -226,7 +226,7 @@ class PrepareSiteCommand extends Command
                 $output->writeln([
                     'This is a patch release. Make and commit any required '
                     . 'changes to this branch before testing.',
-                    ''
+                    '',
                     sprintf(
                         'The site is can be tested at <link>%s</link>. If '
                         . 'testing is successful, the site may be released '
@@ -305,7 +305,7 @@ class PrepareSiteCommand extends Command
         $currentDir = str_replace('/^[A-Za-z]:/', '', $currentDir);
 
         // Consistify path with forward-slashes
-        $pathParts = explode(DIR_SEPARATOR, $currentDir);
+        $pathParts = explode(DIRECTORY_SEPARATOR, $currentDir);
         $currentDir = implode('/', $pathParts);
 
         return ($currentDir === '/so/sites/' . $site . '/live');
