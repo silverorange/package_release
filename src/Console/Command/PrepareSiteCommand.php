@@ -222,7 +222,7 @@ class PrepareSiteCommand extends Command
                 '',
             ]);
 
-            if ($this->getOption('type') === 'patch') {
+            if ($input->getOption('type') === 'patch') {
                 $output->writeln([
                     'This is a patch release. Make and commit any required '
                     . 'changes to this branch before testing.',
