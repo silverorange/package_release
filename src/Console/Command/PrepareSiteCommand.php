@@ -134,6 +134,15 @@ class PrepareSiteCommand extends Command
             return 1;
         }
 
+        if (!$this->isInLiveDirectory()) {
+            $output->writeln([
+                'You must be in the site’s <variable>live</variable> '
+                . 'directory to prepare a release.',
+                ''
+            ]);
+            return 1;
+        }
+
         $current_version = $this->manager->getCurrentVersionFromRemote(
             $remote
         );
@@ -156,7 +165,9 @@ class PrepareSiteCommand extends Command
         );
         $output->writeln([
             sprintf(
-                '<header>Preparing release branch for version %s:</header>',
+                '<header>Preparing release branch of <variable>%s</variable> '
+                . 'for version %s:</header>',
+                OutputFormatter::escape($this->getSiteTitle),
                 OutputFormatter::escape($next_version)
             ),
             '',
@@ -278,6 +289,26 @@ class PrepareSiteCommand extends Command
                 )
             );
         }
+    }
+
+    protected function getSiteTitle(): string
+    {
+        return basename(dirname(getcwd()));
+    }
+
+    protected function isInLiveDirectory(): bool
+    {
+        $currentDir = getcwd();
+        $site = basename(dirname($currentDir));
+
+        // Strip drive letter in Windows paths
+        $currentDir = str_replace('/^[A-Za-z]:/', '', $currentDir);
+
+        // Consistify path with forward-slashes
+        $pathParts = explode(DIR_SEPARATOR, $currentDir);
+        $currentDir = implode('/', $pathParts);
+
+        return ($currentDir === '/so/sites/' . $site . '/live');
     }
 
     protected function getTestingCommand(BuilderInterface $builder): string
