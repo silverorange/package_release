@@ -14,6 +14,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Silverorange\PackageRelease\Git\Manager;
 use Silverorange\PackageRelease\Console\Formatter\Style;
 use Silverorange\PackageRelease\Console\Formatter\LineWrapper;
+use Silverorange\PackageRelease\Console\Formatter\OutputFormatter as PackageReleaseOutputFormatter;
 use Silverorange\PackageRelease\Console\Question\ConfirmationPrompt;
 use Silverorange\PackageRelease\Builder\BuilderInterface;
 use Silverorange\PackageRelease\Builder\EmberBuilder;
@@ -84,7 +85,7 @@ class PrepareSiteCommand extends Command
                         InputOption::VALUE_REQUIRED,
                         'Release type. Must be one of "major", "minor", or '
                         . '"patch". Semver 2.0 (https://semver.org/) is used '
-                        . 'pick the next release number.',
+                        . 'to pick the next release number.',
                         'minor'
                     ),
                 ))
@@ -97,6 +98,14 @@ class PrepareSiteCommand extends Command
         OutputInterface $output
     ): int {
         $this->validateInputOptions($input, $output);
+
+        // Use custom OutputFormatter that works with mbstring function
+        // overloading enabled.
+        $formatter = $output->getFormatter();
+        $output->setFormatter(
+            new PackageReleaseOutputFormatter($formatter->isDecorated())
+        );
+
         $this->style->execute($input, $output);
 
         if (!$this->manager->isInGitRepo()) {
@@ -321,6 +330,10 @@ class PrepareSiteCommand extends Command
 
     protected function getTestingURL(): string
     {
+        // find site info file, parse test URL from file
+        if (file_exists()) {
+
+        }
         return 'https://www.google.com';
     }
 
