@@ -72,7 +72,7 @@ command = "composer run test"          ; command to run automated tests
 
 ### Variable Interpolation
 
-The metadata file may use the following variables inside values.:
+The metadata file may use the following variables inside values:
 
  - **$hostname** - the hostname of the machine where the release is being prepared.
  - **$branch** - the name of the current Git branch.
