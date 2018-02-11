@@ -56,6 +56,29 @@ Help:
   a site’s live directory. This script should be run before release-site.
 </pre>
 
+Release Metadata File
+---------------------
+The **prepare-site** and **release-site** tools can use a file named
+`release-metadata.ini` if it exists. The format of the file is as follows:
+
+```ini
+[site]
+title = "My Human-Readable Title"      ; Human-readable site title for messages
+
+[testing]
+url = "https://mytestinghost/testpath" ; URL to visit to performa manual testing
+command = "composer run test"          ; command to run automated tests 
+```
+
+### Variable Interpolation
+
+The metadata file may use the following variables inside values.:
+
+ - **$hostname** - the hostname of the machine where the release is being prepared.
+ - **$branch** - the name of the current Git branch.
+
+Other variables will be ignored and used verbatim.
+
 Development
 -----------
 These tools uses [composer](https://getcomposer.org/). To test during
