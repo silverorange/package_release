@@ -43,12 +43,15 @@ if ($autoloader === null) {
 
 use Symfony\Component\Console\Application;
 use Silverorange\PackageRelease\Git\Manager;
+use Silverorange\PackageRelease\Config\ReleaseMetadata;
 use Silverorange\PackageRelease\Console\Command\PrepareSiteCommand;
 use Silverorange\PackageRelease\Console\Formatter\Style;
 
+$manager = new Manager();
+$metadata = new ReleaseMetadata($manager, 'release-metadata.ini');
 $application = new Application('Prepare Site', '1.1.0');
 
-$command = new PrepareSiteCommand(new Manager(), new Style());
+$command = new PrepareSiteCommand($metadata, $manager, new Style());
 
 $application->add($command);
 $application->setDefaultCommand($command->getName(), true);

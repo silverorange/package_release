@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Silverorange\PackageRelease\Git\Manager;
+use Silverorange\PackageRelease\Config\ReleaseMetadata;
 use Silverorange\PackageRelease\Console\Formatter\Style;
 use Silverorange\PackageRelease\Console\Formatter\LineWrapper;
 use Silverorange\PackageRelease\Console\Formatter\OutputFormatter as PackageReleaseOutputFormatter;
@@ -42,9 +43,18 @@ class PrepareSiteCommand extends Command
      */
     protected $style = null;
 
-    public function __construct(Manager $manager, Style $style)
-    {
+    /**
+     * @var Silverorange\PackageRelease\Config\ReleaseMetadata
+     */
+    protected $releaseMetadata = null;
+
+    public function __construct(
+        ReleaseMetadata $metadata,
+        Manager $manager,
+        Style $style
+    ) {
         parent::__construct();
+        $this->setReleaseMetadata($metadata);
         $this->setManager($manager);
         $this->setStyle($style);
     }
@@ -58,6 +68,12 @@ class PrepareSiteCommand extends Command
     public function setStyle(Style $style): self
     {
         $this->style = $style;
+        return $this;
+    }
+
+    public function setReleaseMetadata(ReleaseMetadata $metadata): self
+    {
+        $this->releaseMetadata = $metadata;
         return $this;
     }
 
@@ -225,42 +241,49 @@ class PrepareSiteCommand extends Command
             $output->writeln([
                 '',
                 sprintf(
-                    '<info>%s project built successfully!</info>',
-                    OutputFormatter::escape($builder->getTitle())
+                    '<info>%s project %s built successfully!</info>',
+                    OutputFormatter::escape($builder->getTitle()),
+                    OutputFormatter::escape($this->getSiteTitle())
                 ),
                 '',
             ]);
 
             if ($input->getOption('type') === 'patch') {
-                $output->writeln([
+                $output->writeln(
                     'This is a patch release. Make and commit any required '
-                    . 'changes to this branch before testing.',
-                    '',
+                    . 'changes to this branch before testing.'
+                );
+
+                if ($this->getTestingURL() !== '') {
+                    $output->writeln('');
+                    $output->write(
+                        sprintf(
+                            'The site can be tested at <link>%s</link>. ',
+                            OutputFormatter::escape($this->getTestingURL())
+                        )
+                    );
+                }
+            } elseif ($this->getTestingURL() !== '') {
+                $output->write(
                     sprintf(
-                        'The site is can be tested at <link>%s</link>. If '
-                        . 'testing is successful, the site may be released '
-                        . 'using the <variable>release-site</variable> tool.',
-                        OutputFormatter::escape($this->getTestingURL())
-                    ),
-                ]);
-            } else {
-                $output->writeln([
-                    sprintf(
-                        'The site is ready to test at <link>%s</link>. If '
-                        . 'testing is successful, the site may be released '
-                        . 'using the <variable>release-site</variable> tool.',
+                        'The site is ready to test at <link>%s</link>. ',
                         OutputFormatter::escape($this->getTestingURL())
                     )
-                ]);
+                );
             }
+
+            $output->writeln(
+                'If testing is successful, the site may be released using '
+                . 'the <variable>release-site</variable> tool.'
+            );
 
             $testingCommand = $this->getTestingCommand($builder);
             if ($testingCommand != '') {
                 $output->writeln([
                     '',
+                    'Automated tests may be run with:',
                     sprintf(
-                        'Automated tests may be run with '
-                        . '<variable>%s</variable>',
+                        '  <variable>%s</variable>',
                         OutputFormatter::escape($testingCommand)
                     ),
                 ]);
@@ -302,7 +325,8 @@ class PrepareSiteCommand extends Command
 
     protected function getSiteTitle(): string
     {
-        return basename(dirname(getcwd()));
+        $title = $this->releaseMetadata->get('site.title');
+        return ($title === '') ? basename(dirname(getcwd())) : $title;
     }
 
     protected function isInLiveDirectory(): bool
@@ -322,19 +346,12 @@ class PrepareSiteCommand extends Command
 
     protected function getTestingCommand(BuilderInterface $builder): string
     {
-        //return 'yarn test';
-        //return 'npm test';
-        //return 'ember test';
-        return 'composer run test';
+        return $this->releaseMetadata->get('testing.command');
     }
 
     protected function getTestingURL(): string
     {
-        // find site info file, parse test URL from file
-        if (file_exists()) {
-
-        }
-        return 'https://www.google.com';
+        return $this->releaseMetadata->get('testing.url');
     }
 
     protected function getBuilder(): BuilderInterface

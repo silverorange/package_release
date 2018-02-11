@@ -77,6 +77,16 @@ class Manager
     }
 
     /**
+     * Gets the name of the current Git branch
+     *
+     * @return string the name of the current Git branch.
+     */
+    public function getCurrentBranch(): string
+    {
+        return trim(`git rev-parse --abbrev-ref HEAD`);
+    }
+
+    /**
      * Gets the name of the current composer package
      *
      * @return string the name of the current composer package or null if the
