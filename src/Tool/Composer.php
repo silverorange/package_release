@@ -16,8 +16,8 @@ class Composer
     public static function install(OutputInterface $output): bool
     {
         $command = 'composer install '
-          . '--quiet '
           . '--no-interaction '
+          . '--no-ansi '
           . '--optimize-autoloader '
           . '--classmap-authoritative';
 
