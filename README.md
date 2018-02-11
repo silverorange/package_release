@@ -63,11 +63,11 @@ The **prepare-site** and **release-site** tools can use a file named
 
 ```ini
 [site]
-title = "My Human-Readable Title"      ; Human-readable site title for messages
+title = "My Human-Readable Title"  ; Human-readable site title for messages
 
 [testing]
-url = "https://mytestinghost/testpath" ; URL to visit to performa manual testing
-command = "composer run test"          ; command to run automated tests 
+url = "https://$hostname/testpath" ; URL to visit to perform manual testing
+command = "composer run test"      ; command to run automated tests 
 ```
 
 ### Variable Interpolation
