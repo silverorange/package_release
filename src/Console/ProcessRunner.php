@@ -47,7 +47,13 @@ class ProcessRunner
         string $success_message,
         string $failure_message
     ) {
-        $this->process = new Process($command);
+        $this->process = new Process(
+            $command,
+            null,
+            null,
+            null,
+            null // disable timeout
+        );
         $this->output = $output;
         $this->starting_message = $starting_message;
         $this->success_message = $success_message;
