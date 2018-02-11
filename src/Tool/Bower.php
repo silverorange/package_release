@@ -3,6 +3,7 @@
 namespace Silverorange\PackageRelease\Tool;
 
 use Symfony\Component\Console\Output\OutputInterface;
+use Silverorange\PackageRelease\Console\ProcessRunner;
 
 /**
  * @package   PackageRelease
