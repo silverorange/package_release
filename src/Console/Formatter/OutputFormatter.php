@@ -24,22 +24,22 @@ class OutputFormatter extends SymfonyOutputFormatter
         $output = '';
         $tagRegex = '[a-z][a-z0-9,_=;-]*+';
         // Note: Offset capture is in bytes. For compatibility, explicitly use
-        // mbstring with ASCII encoding for string manipulations.
+        // mbstring with 8bit encoding for string manipulations.
         preg_match_all("#<(($tagRegex) | /($tagRegex)?)>#ix", $message, $matches, PREG_OFFSET_CAPTURE);
         foreach ($matches[0] as $i => $match) {
             $pos = $match[1];
             $text = $match[0];
 
-            if (0 !== $pos && '\\' == mb_substr($message, $pos - 1, 1, 'ASCII')) {
+            if (0 !== $pos && '\\' == mb_substr($message, $pos - 1, 1, '8bit')) {
                 continue;
             }
 
             // add the text up to the next tag
-            $output .= $this->applyCurrentStyle(mb_substr($message, $offset, $pos - $offset, 'ASCII'));
-            $offset = $pos + strlen($text);
+            $output .= $this->applyCurrentStyle(mb_substr($message, $offset, $pos - $offset, '8bit'));
+            $offset = $pos + mb_strlen($text, '8bit');
 
             // opening tag?
-            if ($open = '/' != mb_substr($text, 1, 1, 'ASCII')) {
+            if ($open = '/' != mb_substr($text, 1, 1, '8bit')) {
                 $tag = $matches[1][$i][0];
             } else {
                 $tag = isset($matches[3][$i][0]) ? $matches[3][$i][0] : '';
@@ -48,7 +48,7 @@ class OutputFormatter extends SymfonyOutputFormatter
             if (!$open && !$tag) {
                 // </>
                 $this->getStyleStack()->pop();
-            } elseif (false === $style = $this->createStyleFromString(strtolower($tag))) {
+            } elseif (false === $style = $this->createStyleFromString(mb_strtolower($tag))) {
                 $output .= $this->applyCurrentStyle($text);
             } elseif ($open) {
                 $this->getStyleStack()->push($style);
@@ -57,9 +57,9 @@ class OutputFormatter extends SymfonyOutputFormatter
             }
         }
 
-        $output .= $this->applyCurrentStyle(mb_substr($message, $offset, null, 'ASCII'));
+        $output .= $this->applyCurrentStyle(mb_substr($message, $offset, null, '8bit'));
 
-        if (false !== mb_strpos($output, "\0", 0, 'ASCII')) {
+        if (false !== mb_strpos($output, "\0", 0, '8bit')) {
             return strtr($output, array("\0" => '\\', '\\<' => '<'));
         }
 
@@ -105,7 +105,7 @@ class OutputFormatter extends SymfonyOutputFormatter
 
     private function applyCurrentStyle(string $text): string
     {
-        return ($this->isDecorated() && strlen($text) > 0)
+        return ($this->isDecorated() && $text !== '')
             ? $this->getStyleStack()->getCurrent()->apply($text)
             : $text;
     }
