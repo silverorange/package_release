@@ -57,7 +57,6 @@ class ReleaseMetadata extends Config
             $value
         );
 
-
         return $value;
     }
 
