@@ -90,7 +90,7 @@ class ProcessRunner
         );
     }
 
-    protected function fail(): void
+    protected function failure(): void
     {
         $this->clearStartingMessage();
 
@@ -102,7 +102,8 @@ class ProcessRunner
             ''
         ]);
 
-        $debug_output = explode(PHP_EOL, $this->process->getOutput());
+        $debug_output = explode(PHP_EOL, $this->process->getOutput())
+            + explode(PHP_EOL, $this->process->getErrorOutput());
 
         // strip escape codes
         $debug_output = array_map(function ($line) {
