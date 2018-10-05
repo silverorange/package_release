@@ -142,23 +142,6 @@ class PrepareSiteCommand extends Command
             return 1;
         }
 
-        $remote_url = sprintf(
-            'git@github.com:silverorange/%s.git',
-            $repo_name
-        );
-        $remote = $this->manager->getRemoteByUrl($remote_url);
-        if ($remote === null) {
-            $output->writeln([
-                sprintf(
-                    'Could not find silverorange remote. A remote with the '
-                    . 'URL <variable>%s</variable> must exist.',
-                    OutputFormatter::escape($remote_url)
-                ),
-                ''
-            ]);
-            return 1;
-        }
-
         if (!$this->isInLiveDirectory()) {
             $output->writeln([
                 'You must be in the site’s <variable>live</variable> '
@@ -167,6 +150,11 @@ class PrepareSiteCommand extends Command
             ]);
             return 1;
         }
+
+        // This relies on the project's live repository being set up correctly,
+        // but means it will work for sites across GitHub organziations without
+        // any extra configuration.
+        $remote = 'origin';
 
         $current_version = $this->manager->getCurrentVersionFromRemote(
             $remote
