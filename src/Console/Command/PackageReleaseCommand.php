@@ -319,6 +319,8 @@ class PackageReleaseCommand extends Command
             . '<link>https://composer.silverorange.com/</link>.',
             ''
         ]);
+
+        return 0;
     }
 
     protected function validateInputOptions(
