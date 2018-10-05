@@ -368,7 +368,7 @@ class PackageReleaseCommand extends Command
             ''
         ]);
 
-        $wrapped_lines = (new LineWrapper())->wrap($debug_output, 76, '  ');
+        $wrapped_lines = (new LineWrapper())->wrap($debug_output);
         $output->writeln(array_map(function ($line) {
             return sprintf(
                 '<output>%s</output>',
