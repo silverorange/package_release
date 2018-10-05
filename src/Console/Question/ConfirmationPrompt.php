@@ -1,23 +1,33 @@
 <?php
 
-namespace silverorange\PackageRelease;
+namespace Silverorange\PackageRelease\Console\Question;
+
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2017 silverorange
+ * @copyright 2017-2018 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
-class Prompt
+class ConfirmationPrompt
 {
     /**
-     * @var silverorange\PackageRelease\Output
+     * @var Symfony\Component\Console\Helper\QuestionHelper
      */
-    protected $output = null;
+    protected $helper = null;
 
-    public function __construct(Output $output)
+    public function __construct(QuestionHelper $helper)
     {
-        $this->output = $output;
+        $this->setHelper($helper);
+    }
+
+    public function setHelper(QuestionHelper $helper)
+    {
+        $this->helper = $helper;
     }
 
     /**
@@ -33,19 +43,19 @@ class Prompt
      *
      * @return boolean true if the user entered yes, otherwise false.
      */
-    public function ask($line1 = 'Yes or no? ', $line2 = null)
-    {
+    public function ask(
+        InputInterface $input,
+        OutputInterface $output,
+        string $message
+    ): bool {
         $answered = false;
 
-        $prompt = ($line2 === null) ? $line1 : $line2;
-        $this->output->out(PHP_EOL);
+        $output->writeln('');
+        $question = new Question('<prompt>></prompt> ', null);
 
         while (!$answered) {
-            if ($line2 !== null) {
-                $this->output->out($line1);
-            }
-            $this->output->out($prompt);
-            $response = readline();
+            $output->writeln($message);
+            $response = $this->helper->ask($input, $output, $question);
             if (preg_match('/^y|yes$/i', $response) === 1) {
                 $response = true;
                 $answered = true;
@@ -53,7 +63,7 @@ class Prompt
                 $response = false;
                 $answered = true;
             }
-            $this->output->out(PHP_EOL);
+            $output->writeln('');
         }
 
         return $response;
