@@ -235,7 +235,7 @@ class PackageReleaseCommand extends Command
         }
 
         $message = $input->getOption('message');
-        if ($message === '' || $mesasge === null) {
+        if ($message === '' || $message === null) {
             $message = sprintf(
                 'Release version %s.',
                 $next_version
