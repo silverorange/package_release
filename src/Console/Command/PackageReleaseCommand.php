@@ -316,7 +316,7 @@ class PackageReleaseCommand extends Command
             '',
             'The composer repository will automatically update. It may take a '
             . 'few minutes for the release to appear at '
-            . '<link>https://composer/</link>.',
+            . '<link>https://composer.silverorange.com/</link>.',
             ''
         ]);
     }
