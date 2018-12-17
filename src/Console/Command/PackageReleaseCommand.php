@@ -142,22 +142,37 @@ class PackageReleaseCommand extends Command
             return 1;
         }
 
-        $remote_url = sprintf(
-            'git@github.com:silverorange/%s.git',
-            $repo_name
-        );
-        $remote = $this->manager->getRemoteByUrl($remote_url);
+        // Check HippoEducation first because if we have both, we want to
+        // use the HippoEducation remote.
+        $allowed_orgs = [ 'HippoEducation', 'silverorange' ];
+        foreach ($allowed_orgs as $org_name) {
+            $remote_url = sprintf(
+                'git@github.com:%s/%s.git',
+                $org_name,
+                $repo_name
+            );
+            $remote = $this->manager->getRemoteByUrl($remote_url);
+            if ($remote !== null) {
+                break;
+            }
+        }
         if ($remote === null) {
             $output->writeln([
                 sprintf(
-                    'Could not find silverorange remote. A remote with the '
-                    . 'URL <variable>%s</variable> must exist.',
-                    OutputFormatter::escape($remote_url)
+                    'Could not find valid remote. A remote from one of the '.
+                    'following GitHub orgs must exist: %s.',
+                    OutputFormatter::escape(implode($allowed_orgs, ', '))
                 ),
                 ''
             ]);
             return 1;
         }
+        $output->writeln([
+            sprintf(
+                'Using remote with URL %s for release.',
+                OutputFormatter::escape($remote_url)
+            )
+        ]);
 
         $current_version = $this->manager->getCurrentVersionFromRemote(
             $remote
