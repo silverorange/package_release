@@ -157,7 +157,7 @@ class PackageReleaseCommand extends Command
             }
         }
         if ($remote === null) {
-            $formatted_orgs = array_map(function($org){
+            $formatted_orgs = array_map(function(string $org): string {
                 return sprintf(
                     '<variable>%s</variable>',
                     OutputFormatter::escape($org)
@@ -166,7 +166,7 @@ class PackageReleaseCommand extends Command
 
             $output->writeln([
                 sprintf(
-                    'Could not find valid remote. A remote from one of the '.
+                    'Could not find a valid remote. A remote from one of the '.
                     'following GitHub organizations must exist: %s.',
                     implode($formatted_orgs, ', ')
                 ),
