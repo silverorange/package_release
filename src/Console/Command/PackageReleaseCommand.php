@@ -157,7 +157,7 @@ class PackageReleaseCommand extends Command
             }
         }
         if ($remote === null) {
-            $formatted_orgs = array_map(function(string $org): string {
+            $formatted_orgs = array_map(function (string $org): string {
                 return sprintf(
                     '<variable>%s</variable>',
                     OutputFormatter::escape($org)
