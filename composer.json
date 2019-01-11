@@ -29,7 +29,8 @@
         "post-update-cmd": "./vendor/bin/phpcs --config-set installed_paths vendor/silverorange/coding-standard/src"
     },
     "bin": [
-        "bin/package-release"
+        "bin/package-release",
+        "bin/prepare-site"
     ],
     "autoload": {
         "psr-4": {
