@@ -324,7 +324,6 @@ class PrepareSiteCommand extends Command
 
     protected function getSiteTitle(): string
     {
-        $module = '';
         if ($this->isMonoRepo()) {
             $module = $this->getModuleName();
             $array = $this->releaseMetadata->all();
