@@ -284,7 +284,7 @@ class Manager
      * @return string the most recent version tag, or 0.0.0 if no release
      *                exists.
      */
-    public function getCurrentVersionFromRemote(string $remote): string
+    public function getCurrentVersionFromRemote(string $remote, string $module): string
     {
         $remote = escapeshellarg($remote);
 
@@ -292,12 +292,19 @@ class Manager
         $tags = `git ls-remote --tags --refs $remote`;
         $tags = explode(PHP_EOL, $tags);
 
+        // Define a regular expression to handle monorepos or otherwise. The
+        // format for a mono repo version number is module@1.2.3.
+        $regex = '/'.$module.'\@([0-9]+\.[0-9]+\.[0-9]+)/';
+
+        if (empty($module)) {
+            $regex = '/([0-9]+\.[0-9]+\.[0-9]+)/';
+        }
         // filter out version rows and strip out commit ids
         $tags = array_filter(
             array_map(
-                function ($line) {
+                function ($line) use ($regex) {
                     $matches = array();
-                    preg_match('/([0-9]+\.[0-9]+\.[0-9]+)/', $line, $matches);
+                    preg_match($regex, $line, $matches);
 
                     if (count($matches) === 2) {
                         return $matches[1];
@@ -319,7 +326,11 @@ class Manager
         );
 
         if (count($tags) === 0) {
-            $tag = '0.0.0';
+            if (empty($module)) {
+                $tag = '0.0.0';
+            } else {
+                $tag = $module.'@0.0.0';
+            }
         } else {
             // get last tag
             $tag = end($tags);
@@ -347,6 +358,14 @@ class Manager
         string $current_version,
         string $type = self::VERSION_MINOR
     ): string {
+        // Handle possible monorepo version numbers.
+        $sections = explode ('@', $current_version);
+
+        if (count($sections) === 2) {
+            $module = $sections[0];
+            $current_version = $sections[1];
+        }
+
         $parts = explode('.', $current_version);
 
         if (count($parts) !== 3) {
@@ -365,6 +384,10 @@ class Manager
                     $next = $parts[0] . '.' . ($parts[1] + 1) . '.0';
                     break;
             }
+        }
+
+        if (!empty($module)) {
+            $next = $module.'@'.$next;
         }
 
         return $next;
