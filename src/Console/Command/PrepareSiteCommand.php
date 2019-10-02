@@ -150,7 +150,7 @@ class PrepareSiteCommand extends Command
             ]);
             return 1;
         }
-        
+
         if ($this->isMonoRepo() && !$this->isInMonoRepoModule()) {
             $output->writeln([
                 "You must be in a subdirectory of this monorepo's <variable>"
@@ -187,7 +187,6 @@ class PrepareSiteCommand extends Command
             $type
         );
 
-        echo "VERSION: " . $next_version;
         $output->writeln([
             sprintf(
                 '<header>Preparing release branch of %s for version '
@@ -351,23 +350,6 @@ class PrepareSiteCommand extends Command
 
         return ($currentDir === '/so/sites/' . $site . '/live');
     }
-
-   /* protected function isInSubSiteDirectory(): bool
-    {
-        $currentDir = getcwd();
-        $subSite = basename(dirname($currentDir));
-
-        // Strip drive letter in Windows paths
-        $currentDir = str_replace('/^[A-Za-z]:/', '', $currentDir);
-
-        // Consistify path with forward-slashes and get site name.
-        $pathParts = explode(DIRECTORY_SEPARATOR, $currentDir);
-        $site = $pathParts[3];
-        $currentDir = implode('/', $pathParts);
-
-        //return ($currentDir === '/so/sites/' . $site . '/live' . $subSite);
-        return ($currentDir === '/so/sites/' . $site . '/live' . $subSite);
-    }*/
 
     protected function getModuleName(): string
     {
