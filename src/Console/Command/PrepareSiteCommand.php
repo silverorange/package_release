@@ -142,10 +142,19 @@ class PrepareSiteCommand extends Command
             return 1;
         }
 
-        if (!$this->isInLiveDirectory()) {
+        if (!$this->isMonoRepo() && !$this->isInLiveDirectory()) {
             $output->writeln([
                 'You must be in the site’s <variable>live</variable> '
                 . 'directory to prepare a release.',
+                ''
+            ]);
+            return 1;
+        }
+        
+        if ($this->isMonoRepo() && !$this->isInMonoRepoModule()) {
+            $output->writeln([
+                "You must be in a subdirectory of this monorepo's <variable>"
+                . 'live</variable> directory to prepare a release.',
                 ''
             ]);
             return 1;
@@ -157,7 +166,8 @@ class PrepareSiteCommand extends Command
         $remote = 'origin';
 
         $current_version = $this->manager->getCurrentVersionFromRemote(
-            $remote
+            $remote,
+            $this->getModuleName()
         );
         if ($current_version === '0.0.0') {
             $output->writeln([
@@ -176,6 +186,8 @@ class PrepareSiteCommand extends Command
             $current_version,
             $type
         );
+
+        echo "VERSION: " . $next_version;
         $output->writeln([
             sprintf(
                 '<header>Preparing release branch of %s for version '
@@ -313,7 +325,15 @@ class PrepareSiteCommand extends Command
 
     protected function getSiteTitle(): string
     {
-        $title = $this->releaseMetadata->get('site.title');
+        $module = '';
+        if ($this->isMonoRepo()) {
+            $module = $this->getModuleName();
+            $array = $this->releaseMetadata->all();
+            $title = $array[$module]['site.title'];
+        } else {
+            $title = $this->releaseMetadata->get('site.title');
+        }
+
         return ($title === '') ? basename(dirname(getcwd())) : $title;
     }
 
@@ -332,14 +352,76 @@ class PrepareSiteCommand extends Command
         return ($currentDir === '/so/sites/' . $site . '/live');
     }
 
-    protected function getTestingCommand(BuilderInterface $builder): string
+   /* protected function isInSubSiteDirectory(): bool
     {
-        return $this->releaseMetadata->get('testing.command');
+        $currentDir = getcwd();
+        $subSite = basename(dirname($currentDir));
+
+        // Strip drive letter in Windows paths
+        $currentDir = str_replace('/^[A-Za-z]:/', '', $currentDir);
+
+        // Consistify path with forward-slashes and get site name.
+        $pathParts = explode(DIRECTORY_SEPARATOR, $currentDir);
+        $site = $pathParts[3];
+        $currentDir = implode('/', $pathParts);
+
+        //return ($currentDir === '/so/sites/' . $site . '/live' . $subSite);
+        return ($currentDir === '/so/sites/' . $site . '/live' . $subSite);
+    }*/
+
+    protected function getModuleName(): string
+    {
+        // Return false if we cannot determine the module we're in. In that
+        // case, we are not in a monorepo.
+        $module = false;
+        $array = $this->releaseMetadata->all();
+        $currentDir = getcwd();
+        $bottomDir = basename($currentDir);
+        $moduleExists = array_key_exists($bottomDir, $array);
+
+        if ($moduleExists) {
+            $module = $bottomDir;
+        }
+
+        return $module;
+    }
+
+    protected function isInMonoRepoModule(): bool
+    {
+        return !empty($this->getModuleName());
+    }
+
+    protected function isMonoRepo(): bool
+    {
+        $site = $this->releaseMetadata->get('site.title');
+        $testing = $this->releaseMetadata->get('testing.url');
+        return empty($title) && empty($testing);
+    }
+
+    protected function getTestingCommand(BuilderInterface $builder): string
+    {   
+        if ($this->isInMonoRepoModule()) {
+            $module = $this->getModuleName();
+            $array = $this->releaseMetadata->all();
+            $testingCommand = $array[$module]['testing.command'];
+        } else {
+            $testingCommand = $this->releaseMetadata->get('testing.command');
+        }
+
+        return $testingCommand;
     }
 
     protected function getTestingURL(): string
     {
-        return $this->releaseMetadata->get('testing.url');
+        if ($this->isInMonoRepoModule()) {
+            $module = $this->getModuleName();
+            $array = $this->releaseMetadata->all();
+            $testingURL = $array[$module]['testing.url'];
+        } else {
+            $testingURL = $this->releaseMetadata->get('testing.url');
+        }
+
+        return $testingURL;
     }
 
     protected function getBuilder(): BuilderInterface
