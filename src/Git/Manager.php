@@ -284,7 +284,7 @@ class Manager
      * @return string the most recent version tag, or 0.0.0 if no release
      *                exists.
      */
-    public function getCurrentVersionFromRemote(string $remote, string $module): string
+    public function getCurrentVersionFromRemote(string $remote, string $module = ''): string
     {
         $remote = escapeshellarg($remote);
 
@@ -294,7 +294,7 @@ class Manager
 
         // Define a regular expression to handle monorepos or otherwise. The
         // format for a mono repo version number is module@1.2.3.
-        $regex = '/'.$module.'\@([0-9]+\.[0-9]+\.[0-9]+)/';
+        $regex = '/('.$module.'\@[0-9]+\.[0-9]+\.[0-9]+)/';
 
         if (empty($module)) {
             $regex = '/([0-9]+\.[0-9]+\.[0-9]+)/';
@@ -305,7 +305,6 @@ class Manager
                 function ($line) use ($regex) {
                     $matches = array();
                     preg_match($regex, $line, $matches);
-
                     if (count($matches) === 2) {
                         return $matches[1];
                     }
