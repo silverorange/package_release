@@ -391,4 +391,19 @@ class Manager
 
         return $next;
     }
+
+    public function getFileContentFromRemote(
+        string $remote,
+        string $branch,
+        string $path
+    ): string {
+        $content = `git fetch {$remote} && git show {$remote}/{$branch}:{$path}`;
+        if (empty($content)) {
+            throw new \Exception(
+                'Could not load ' . $path . ' from ' . $remote . '/' . $branch . "\n"
+            );
+        }
+
+        return $content;
+    }
 }
