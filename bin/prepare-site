@@ -51,10 +51,6 @@ $manager = new Manager();
 
 $iniFile = 'release-metadata.ini';
 
-if (!file_exists($iniFile)) {
-    $iniFile = '../'.$iniFile;
-}
-
 $metadata = new ReleaseMetadata($manager, $iniFile);
 $application = new Application('Prepare Site', '1.2.0');
 

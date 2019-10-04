@@ -376,7 +376,7 @@ class PrepareSiteCommand extends Command
     {
         $site = $this->releaseMetadata->get('site.title');
         $testing = $this->releaseMetadata->get('testing.url');
-        return empty($title) && empty($testing);
+        return $site == null && $testing == null;
     }
 
     protected function getTestingCommand(BuilderInterface $builder): string
