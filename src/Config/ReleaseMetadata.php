@@ -66,17 +66,4 @@ class ReleaseMetadata extends Config
 
         return $value;
     }
-
-    protected function getDefaults()
-    {
-        return [
-            'site' => [
-                'title' => '',
-            ],
-            'testing' => [
-                'url' => '',
-                'command' => '',
-            ],
-        ];
-    }
 }

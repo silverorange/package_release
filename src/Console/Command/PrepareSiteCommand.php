@@ -374,9 +374,10 @@ class PrepareSiteCommand extends Command
 
     protected function isMonoRepo(): bool
     {
-        $site = $this->releaseMetadata->get('site.title');
-        $testing = $this->releaseMetadata->get('testing.url');
-        return $site == null && $testing == null;
+        $array = $this->releaseMetadata->all();
+        return count($array) > 0 &&
+            !(array_key_exists('site', $array) &&
+            array_key_exists('testing', $array));
     }
 
     protected function getTestingCommand(BuilderInterface $builder): string
