@@ -397,10 +397,26 @@ class Manager
         string $branch,
         string $path
     ): string {
-        $content = `git fetch {$remote} && git show {$remote}/{$branch}:{$path}`;
-        if (empty($content)) {
+        $command = sprintf(
+            "git fetch %s && git show %s/%s:%s 2>&1",
+            $remote,
+            $remote,
+            $branch,
+            $path
+        );
+
+        exec($command, $output, $returnValue);
+
+        if ($returnValue == 0) {
+            $content = implode("\n", $output);
+        } else {
             throw new \Exception(
-                'Could not load ' . $path . ' from ' . $remote . '/' . $branch . "\n"
+                sprintf(
+                    "Could not load %s from %s/%s\n",
+                    $path,
+                    $remote,
+                    $branch
+                )
             );
         }
 
