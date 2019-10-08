@@ -2,6 +2,8 @@
 
 namespace Silverorange\PackageRelease\Git;
 
+use Silverorange\PackageRelease\Exception\GitRemoteFileException;
+
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
@@ -392,6 +394,20 @@ class Manager
         return $next;
     }
 
+    /**
+     * Gets the content of a file from a remote branch
+     *
+     * @param string $remote the version of the current release.
+     * @param string $branch the remote branch name from which to fetch the
+     *                       file.
+     * @param string $path   the path of the file in the git repository.
+     *
+     * @return string the file content from the specified remote branch and
+     *                path.
+     *
+     * @throws Silverorange\PackageRelease\Exception\GitRemoteFileException if
+     *         the remote file could not be loaded.
+     */
     public function getFileContentFromRemote(
         string $remote,
         string $branch,
@@ -405,21 +421,23 @@ class Manager
             $path
         );
 
-        exec($command, $output, $returnValue);
+        exec($command, $output, $return);
 
-        if ($returnValue == 0) {
-            $content = implode("\n", $output);
-        } else {
-            throw new \Exception(
-                sprintf(
-                    "Could not load %s from %s/%s\n",
-                    $path,
-                    $remote,
-                    $branch
-                )
-            );
+        if ($return === 0) {
+            return implode("\n", $output);
         }
 
-        return $content;
+        throw new GitRemoteFileException(
+            sprintf(
+                "Could not load %s from %s/%s\n",
+                $path,
+                $remote,
+                $branch
+            ),
+            0,
+            $remote,
+            $branch,
+            $path
+        );
     }
 }
