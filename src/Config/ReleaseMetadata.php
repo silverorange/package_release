@@ -7,6 +7,7 @@ use Noodlehaus\Config;
 use Noodlehaus\Parser\Ini;
 use Noodlehaus\Exception\FileNotFoundException;
 use Silverorange\PackageRelease\Git\Manager;
+use Silverorange\PackageRelease\Exceptions\GitRemoteFileException;
 
 /**
  * @package   PackageRelease
@@ -32,8 +33,8 @@ class ReleaseMetadata extends Config
                 $path
             );
 
-            parent::__construct($config, new Ini, true);
-        } catch (\Exception $e) {
+            parent::__construct($config, new Ini(), true);
+        } catch (GitRemoteFileException $e) {
             $this->data = [];
             AbstractConfig::__construct($this->data);
         }
