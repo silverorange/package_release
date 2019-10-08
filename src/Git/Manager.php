@@ -297,13 +297,14 @@ class Manager
         $tags = `git ls-remote --tags --refs $remote`;
         $tags = explode(PHP_EOL, $tags);
 
-        // Define a regular expression to handle monorepos or otherwise. The
-        // format for a mono repo version number is module@1.2.3.
-        $regex = '/('.$module.'\@[0-9]+\.[0-9]+\.[0-9]+)/';
-
-        if (empty($module)) {
+        if ($module === '') {
             $regex = '/([0-9]+\.[0-9]+\.[0-9]+)/';
+        } else {
+            // Define a regular expression to handle monorepos or otherwise.
+            // The format for a monorepo version number is module@1.2.3.
+            $regex = '/(' . preg_quote($module, '/') . '@[0-9]+\.[0-9]+\.[0-9]+)/';
         }
+
         // filter out version rows and strip out commit ids
         $tags = array_filter(
             array_map(
@@ -323,18 +324,15 @@ class Manager
             }
         );
 
-        // sort by version number
+        // Sort by version number. Note that version_compare strips the leading
+        // module name and @ symbol for monorepos.
         usort(
             $tags,
             'version_compare'
         );
 
         if (count($tags) === 0) {
-            if (empty($module)) {
-                $tag = '0.0.0';
-            } else {
-                $tag = $module.'@0.0.0';
-            }
+            $tag = ($module === '') ? '0.0.0' : $module . '@0.0.0';
         } else {
             // get last tag
             $tag = end($tags);
