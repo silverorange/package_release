@@ -49,9 +49,7 @@ use Silverorange\PackageRelease\Console\Formatter\Style;
 
 $manager = new Manager();
 
-$iniFile = 'release-metadata.ini';
-
-$metadata = new ReleaseMetadata($manager, $iniFile);
+$metadata = new ReleaseMetadata($manager, 'release-metadata.ini');
 $application = new Application('Prepare Site', '1.2.0');
 
 $command = new PrepareSiteCommand($metadata, $manager, new Style());
