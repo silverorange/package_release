@@ -415,10 +415,10 @@ class Manager
     ): string {
         $command = sprintf(
             "git fetch %s && git show %s/%s:%s 2>&1",
-            $remote,
-            $remote,
-            $branch,
-            $path
+            escapeshellarg($remote),
+            escapeshellarg($remote),
+            escapeshellarg($branch),
+            escapeshellarg($path)
         );
 
         exec($command, $output, $return);
