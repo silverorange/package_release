@@ -282,12 +282,15 @@ class Manager
      * Gets the most recent version tag from the specified remote
      *
      * @param string $remote the name of the remote.
+     * @param string $module optional. The module name if this is a monorepo.
      *
      * @return string the most recent version tag, or 0.0.0 if no release
      *                exists.
      */
-    public function getCurrentVersionFromRemote(string $remote, string $module = ''): string
-    {
+    public function getCurrentVersionFromRemote(
+        string $remote,
+        string $module = ''
+    ): string {
         $remote = escapeshellarg($remote);
 
         // get remote tags
