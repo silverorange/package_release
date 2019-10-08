@@ -46,7 +46,7 @@ class PrepareSiteCommand extends Command
     /**
      * @var Silverorange\PackageRelease\Config\ReleaseMetadata
      */
-    protected $relaese_metadata = null;
+    protected $release_metadata = null;
 
     public function __construct(
         ReleaseMetadata $metadata,
@@ -73,7 +73,7 @@ class PrepareSiteCommand extends Command
 
     public function setReleaseMetadata(ReleaseMetadata $metadata): self
     {
-        $this->relaese_metadata = $metadata;
+        $this->release_metadata = $metadata;
         return $this;
     }
 
@@ -326,9 +326,9 @@ class PrepareSiteCommand extends Command
     {
         if ($this->isMonoRepo()) {
             $module = $this->getMonoRepoModuleName();
-            $title = $this->relaese_metadata->get($module . '.site.title');
+            $title = $this->release_metadata->get($module . '.site.title');
         } else {
-            $title = $this->relaese_metadata->get('site.title');
+            $title = $this->release_metadata->get('site.title');
         }
 
         return ($title === '') ? basename(dirname(getcwd())) : $title;
@@ -351,7 +351,7 @@ class PrepareSiteCommand extends Command
 
     protected function getMonoRepoModuleName(): string
     {
-        $metadata = $this->relaese_metadata->all();
+        $metadata = $this->release_metadata->all();
         $current_dir = getcwd();
         $module_name = basename($current_dir);
 
@@ -371,7 +371,7 @@ class PrepareSiteCommand extends Command
 
     protected function isMonoRepo(): bool
     {
-        $metadata = $this->relaese_metadata->all();
+        $metadata = $this->release_metadata->all();
         return count($metadata) > 0 &&
             !(array_key_exists('site', $array) &&
             array_key_exists('testing', $array));
@@ -381,11 +381,11 @@ class PrepareSiteCommand extends Command
     {
         if ($this->isInMonoRepoModule()) {
             $module = $this->getMonoRepoModuleName();
-            $testing_command = $this->relaese_metadata->get(
+            $testing_command = $this->release_metadata->get(
                 $module . '.testing.command'
             );
         } else {
-            $testing_command = $this->relaese_metadata->get('testing.command');
+            $testing_command = $this->release_metadata->get('testing.command');
         }
 
         return $testing_command;
@@ -395,11 +395,11 @@ class PrepareSiteCommand extends Command
     {
         if ($this->isInMonoRepoModule()) {
             $module = $this->getMonoRepoModuleName();
-            $testing_url = $this->relaese_metadata->get(
+            $testing_url = $this->release_metadata->get(
                 $module . '.testing.url'
             );
         } else {
-            $testing_url = $this->relaese_metadata->get('testing.url');
+            $testing_url = $this->release_metadata->get('testing.url');
         }
 
         return $testing_url;
