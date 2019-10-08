@@ -22,10 +22,10 @@ class OutputFormatter extends SymfonyOutputFormatter
         $message = (string) $message;
         $offset = 0;
         $output = '';
-        $tagRegex = '[a-z][a-z0-9,_=;-]*+';
+        $tag_regex = '[a-z][a-z0-9,_=;-]*+';
         // Note: Offset capture is in bytes. For compatibility, explicitly use
         // mbstring with 8bit encoding for string manipulations.
-        preg_match_all("#<(($tagRegex) | /($tagRegex)?)>#ix", $message, $matches, PREG_OFFSET_CAPTURE);
+        preg_match_all("#<(($tag_regex) | /($tag_regex)?)>#ix", $message, $matches, PREG_OFFSET_CAPTURE);
         foreach ($matches[0] as $i => $match) {
             $pos = $match[1];
             $text = $match[0];

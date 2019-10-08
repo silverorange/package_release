@@ -2,6 +2,8 @@
 
 namespace Silverorange\PackageRelease\Git;
 
+use Silverorange\PackageRelease\Exception\GitRemoteFileException;
+
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
@@ -280,25 +282,35 @@ class Manager
      * Gets the most recent version tag from the specified remote
      *
      * @param string $remote the name of the remote.
+     * @param string $module optional. The module name if this is a monorepo.
      *
      * @return string the most recent version tag, or 0.0.0 if no release
      *                exists.
      */
-    public function getCurrentVersionFromRemote(string $remote): string
-    {
+    public function getCurrentVersionFromRemote(
+        string $remote,
+        string $module = ''
+    ): string {
         $remote = escapeshellarg($remote);
 
         // get remote tags
         $tags = `git ls-remote --tags --refs $remote`;
         $tags = explode(PHP_EOL, $tags);
 
+        if ($module === '') {
+            $regex = '/([0-9]+\.[0-9]+\.[0-9]+)/';
+        } else {
+            // Define a regular expression to handle monorepos or otherwise.
+            // The format for a monorepo version number is module@1.2.3.
+            $regex = '/(' . preg_quote($module, '/') . '@[0-9]+\.[0-9]+\.[0-9]+)/';
+        }
+
         // filter out version rows and strip out commit ids
         $tags = array_filter(
             array_map(
-                function ($line) {
+                function ($line) use ($regex) {
                     $matches = array();
-                    preg_match('/([0-9]+\.[0-9]+\.[0-9]+)/', $line, $matches);
-
+                    preg_match($regex, $line, $matches);
                     if (count($matches) === 2) {
                         return $matches[1];
                     }
@@ -312,14 +324,15 @@ class Manager
             }
         );
 
-        // sort by version number
+        // Sort by version number. Note that version_compare strips the leading
+        // module name and @ symbol for monorepos.
         usort(
             $tags,
             'version_compare'
         );
 
         if (count($tags) === 0) {
-            $tag = '0.0.0';
+            $tag = ($module === '') ? '0.0.0' : $module . '@0.0.0';
         } else {
             // get last tag
             $tag = end($tags);
@@ -347,6 +360,15 @@ class Manager
         string $current_version,
         string $type = self::VERSION_MINOR
     ): string {
+        // Handle possible monorepo version numbers.
+        $sections = explode('@', $current_version);
+        if (count($sections) === 2) {
+            $module = $sections[0];
+            $current_version = $sections[1];
+        } else {
+            $module = '';
+        }
+
         $parts = explode('.', $current_version);
 
         if (count($parts) !== 3) {
@@ -367,6 +389,59 @@ class Manager
             }
         }
 
+        // If we are in a monrepo, prefix the next version with the module
+        // name.
+        if ($module !== '') {
+            $next = $module . '@' . $next;
+        }
+
         return $next;
+    }
+
+    /**
+     * Gets the content of a file from a remote branch
+     *
+     * @param string $remote the version of the current release.
+     * @param string $branch the remote branch name from which to fetch the
+     *                       file.
+     * @param string $path   the path of the file in the git repository.
+     *
+     * @return string the file content from the specified remote branch and
+     *                path.
+     *
+     * @throws Silverorange\PackageRelease\Exception\GitRemoteFileException if
+     *         the remote file could not be loaded.
+     */
+    public function getFileContentFromRemote(
+        string $remote,
+        string $branch,
+        string $path
+    ): string {
+        $command = sprintf(
+            "git fetch %s && git show %s/%s:%s 2>&1",
+            escapeshellarg($remote),
+            escapeshellarg($remote),
+            escapeshellarg($branch),
+            escapeshellarg($path)
+        );
+
+        exec($command, $output, $return);
+
+        if ($return === 0) {
+            return implode("\n", $output);
+        }
+
+        throw new GitRemoteFileException(
+            sprintf(
+                "Could not load %s from %s/%s\n",
+                $path,
+                $remote,
+                $branch
+            ),
+            0,
+            $remote,
+            $branch,
+            $path
+        );
     }
 }

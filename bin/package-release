@@ -10,7 +10,7 @@
 
 namespace Silverorange\PackageRelease;
 
-$autoloadPaths = array(
+$autoload_paths = array(
     // Try to load autoloader if this is the root project.
     __DIR__ . '/../vendor/autoload.php',
 
@@ -20,7 +20,7 @@ $autoloadPaths = array(
 );
 
 $autoloader = null;
-foreach ($autoloadPaths as $path) {
+foreach ($autoload_paths as $path) {
     if (file_exists($path)) {
         $autoloader = $path;
         break;
