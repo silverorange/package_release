@@ -360,7 +360,7 @@ class Manager
         string $type = self::VERSION_MINOR
     ): string {
         // Handle possible monorepo version numbers.
-        $sections = explode ('@', $current_version);
+        $sections = explode('@', $current_version);
 
         if (count($sections) === 2) {
             $module = $sections[0];
