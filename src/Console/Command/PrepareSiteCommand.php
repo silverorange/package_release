@@ -167,7 +167,7 @@ class PrepareSiteCommand extends Command
 
         $current_version = $this->manager->getCurrentVersionFromRemote(
             $remote,
-            $this->getModuleName()
+            $this->getMonoRepoModuleName()
         );
         if ($current_version === '0.0.0') {
             $output->writeln([
@@ -325,9 +325,8 @@ class PrepareSiteCommand extends Command
     protected function getSiteTitle(): string
     {
         if ($this->isMonoRepo()) {
-            $module = $this->getModuleName();
-            $array = $this->releaseMetadata->all();
-            $title = $array[$module]['site.title'];
+            $module = $this->getMonoRepoModuleName();
+            $title = $this->releaseMetadata->get($module . '.site.title');
         } else {
             $title = $this->releaseMetadata->get('site.title');
         }
@@ -350,42 +349,41 @@ class PrepareSiteCommand extends Command
         return ($currentDir === '/so/sites/' . $site . '/live');
     }
 
-    protected function getModuleName(): string
+    protected function getMonoRepoModuleName(): string
     {
-        // Return false if we cannot determine the module we're in. In that
-        // case, we are not in a monorepo.
-        $module = false;
-        $array = $this->releaseMetadata->all();
+        $metadata = $this->releaseMetadata->all();
         $currentDir = getcwd();
-        $bottomDir = basename($currentDir);
-        $moduleExists = array_key_exists($bottomDir, $array);
+        $moduleName = basename($currentDir);
 
-        if ($moduleExists) {
-            $module = $bottomDir;
+        if (array_key_exists($moduleName, $metadata)) {
+            return $moduleName;
         }
 
-        return $module;
+        // Return empty string if we cannot determine the module we are in. In
+        // that case, we are not in a monorepo.
+        return '';
     }
 
     protected function isInMonoRepoModule(): bool
     {
-        return !empty($this->getModuleName());
+        return $this->getMonoRepoModuleName() !== '';
     }
 
     protected function isMonoRepo(): bool
     {
-        $array = $this->releaseMetadata->all();
-        return count($array) > 0 &&
+        $metadata = $this->releaseMetadata->all();
+        return count($metadata) > 0 &&
             !(array_key_exists('site', $array) &&
             array_key_exists('testing', $array));
     }
 
     protected function getTestingCommand(BuilderInterface $builder): string
-    {   
+    {
         if ($this->isInMonoRepoModule()) {
-            $module = $this->getModuleName();
-            $array = $this->releaseMetadata->all();
-            $testingCommand = $array[$module]['testing.command'];
+            $module = $this->getMonoRepoModuleName();
+            $testingCommand = $this->releaseMetadata->get(
+                $module . '.testing.command'
+            );
         } else {
             $testingCommand = $this->releaseMetadata->get('testing.command');
         }
@@ -396,9 +394,10 @@ class PrepareSiteCommand extends Command
     protected function getTestingURL(): string
     {
         if ($this->isInMonoRepoModule()) {
-            $module = $this->getModuleName();
-            $array = $this->releaseMetadata->all();
-            $testingURL = $array[$module]['testing.url'];
+            $module = $this->getMonoRepoModuleName();
+            $testingCommand = $this->releaseMetadata->get(
+                $module . '.testing.url'
+            );
         } else {
             $testingURL = $this->releaseMetadata->get('testing.url');
         }
