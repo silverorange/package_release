@@ -153,7 +153,7 @@ class PrepareSiteCommand extends Command
 
         if ($this->isMonoRepo() && !$this->isInMonoRepoModule()) {
             $output->writeln([
-                "You must be in a subdirectory of this monorepo's <variable>"
+                "You must be in a subdirectory of the monorepo’s <variable>"
                 . 'live</variable> directory to prepare a release.',
                 ''
             ]);
