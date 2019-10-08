@@ -373,8 +373,8 @@ class PrepareSiteCommand extends Command
     {
         $metadata = $this->release_metadata->all();
         return count($metadata) > 0 &&
-            !(array_key_exists('site', $array) &&
-            array_key_exists('testing', $array));
+            !(array_key_exists('site', $metadata) &&
+            array_key_exists('testing', $metadata));
     }
 
     protected function getTestingCommand(BuilderInterface $builder): string
