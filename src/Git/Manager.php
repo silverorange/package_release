@@ -362,10 +362,11 @@ class Manager
     ): string {
         // Handle possible monorepo version numbers.
         $sections = explode('@', $current_version);
-
         if (count($sections) === 2) {
             $module = $sections[0];
             $current_version = $sections[1];
+        } else {
+            $module = '';
         }
 
         $parts = explode('.', $current_version);
@@ -388,8 +389,10 @@ class Manager
             }
         }
 
-        if (!empty($module)) {
-            $next = $module.'@'.$next;
+        // If we are in a monrepo, prefix the next version with the module
+        // name.
+        if ($module !== '') {
+            $next = $module . '@' . $next;
         }
 
         return $next;
