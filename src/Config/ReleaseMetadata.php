@@ -7,7 +7,7 @@ use Noodlehaus\Config;
 use Noodlehaus\Parser\Ini;
 use Noodlehaus\Exception\FileNotFoundException;
 use Silverorange\PackageRelease\Git\Manager;
-use Silverorange\PackageRelease\Exceptions\GitRemoteFileException;
+use Silverorange\PackageRelease\Exception\GitRemoteFileException;
 
 /**
  * @package   PackageRelease
