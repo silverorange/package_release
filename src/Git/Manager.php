@@ -418,7 +418,7 @@ class Manager
         string $path
     ): string {
         $command = sprintf(
-            "git fetch %s && git show %s/%s:%s 2>&1",
+            "git fetch %s 2>&1 && git show %s/%s:%s 2>&1",
             escapeshellarg($remote),
             escapeshellarg($remote),
             escapeshellarg($branch),
