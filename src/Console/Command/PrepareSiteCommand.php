@@ -24,6 +24,7 @@ use Silverorange\PackageRelease\Builder\LegacyPHPBuilder;
 use Silverorange\PackageRelease\Builder\NodeBuilder;
 use Silverorange\PackageRelease\Builder\ReactBuilder;
 use Silverorange\PackageRelease\Builder\StaticBuilder;
+use Silverorange\PackageRelease\Builder\TypeScriptBuilder;
 
 /**
  * @package   PackageRelease
@@ -413,6 +414,7 @@ class PrepareSiteCommand extends Command
             new LegacyPHPBuilder(),
             new EmberBuilder(),
             new ReactBuilder(),
+            new TypeScriptBuilder(),
             new NodeBuilder(),
             new StaticBuilder(),
         ];
