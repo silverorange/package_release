@@ -8,7 +8,7 @@ use Silverorange\PackageRelease\Tool\Npm;
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2019 silverorange
+ * @copyright 2020 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class TypeScriptBuilder extends BaseBuilder
