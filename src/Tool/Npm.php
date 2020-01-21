@@ -28,11 +28,14 @@ class Npm
         ))->run();
     }
 
-    public static function build(OutputInterface $output): bool
-    {
+    public static function build(
+        OutputInterface $output,
+        string $flags = ''
+    ): bool {
+        // Note: Flags are not escaped so that multiple flags can be passed.
         $command = (static::isYarn())
-            ? 'yarn build --silent'
-            : 'npm build --quiet';
+            ? 'yarn build ' . $flags
+            : 'npm build ' . $flags;
 
         return (new ProcessRunner(
             $output,

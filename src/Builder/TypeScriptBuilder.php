@@ -8,19 +8,19 @@ use Silverorange\PackageRelease\Tool\Npm;
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2018 silverorange
+ * @copyright 2020 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
-class ReactBuilder extends BaseBuilder
+class TypeScriptBuilder extends BaseBuilder
 {
     public function isAppropriate(): bool
     {
         if ($this->hasFile('package.json')) {
             $json = json_decode(file_get_contents('package.json'), true);
             return (
-                isset($json['dependencies']) && isset($json['dependencies']['react-scripts'])
+                isset($json['dependencies']) && isset($json['dependencies']['typescript'])
             ) || (
-                isset($json['devDependencies']) && isset($json['devDependencies']['react-scripts'])
+                isset($json['devDependencies']) && isset($json['devDependencies']['typescript'])
             );
         }
 
@@ -30,11 +30,11 @@ class ReactBuilder extends BaseBuilder
     public function build(OutputInterface $output): bool
     {
         return Npm::install($output)
-            && Npm::build($output, '--silent');
+            && Npm::build($output);
     }
 
     public function getTitle(): string
     {
-        return 'React';
+        return 'TypeScript';
     }
 }
