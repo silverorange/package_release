@@ -30,7 +30,7 @@ class ReactBuilder extends BaseBuilder
     public function build(OutputInterface $output): bool
     {
         return Npm::install($output)
-            && Npm::build($output);
+            && Npm::build($output, '--silent');
     }
 
     public function getTitle(): string
