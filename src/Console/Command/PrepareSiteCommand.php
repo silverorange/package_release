@@ -21,6 +21,7 @@ use Silverorange\PackageRelease\Builder\BuilderInterface;
 use Silverorange\PackageRelease\Builder\EmberBuilder;
 use Silverorange\PackageRelease\Builder\LaravelBuilder;
 use Silverorange\PackageRelease\Builder\LegacyPHPBuilder;
+use Silverorange\PackageRelease\Builder\LernaBuilder;
 use Silverorange\PackageRelease\Builder\NodeBuilder;
 use Silverorange\PackageRelease\Builder\ReactBuilder;
 use Silverorange\PackageRelease\Builder\StaticBuilder;
@@ -143,14 +144,14 @@ class PrepareSiteCommand extends Command
             return 1;
         }
 
-        if (!$this->isMonoRepo() && !$this->isInLiveDirectory()) {
-            $output->writeln([
-                'You must be in the site’s <variable>live</variable> '
-                . 'directory to prepare a release.',
-                ''
-            ]);
-            return 1;
-        }
+        // if (!$this->isMonoRepo() && !$this->isInLiveDirectory()) {
+        //     $output->writeln([
+        //         'You must be in the site’s <variable>live</variable> '
+        //         . 'directory to prepare a release.',
+        //         ''
+        //     ]);
+        //     return 1;
+        // }
 
         if ($this->isMonoRepo() && !$this->isInMonoRepoModule()) {
             $output->writeln([
@@ -372,6 +373,13 @@ class PrepareSiteCommand extends Command
 
     protected function isMonoRepo(): bool
     {
+        // This monorepo handling is designed for a setup where each repo
+        // is independent and can be deployed independently, not for Lerna monorepos,
+        // which should be deployed from the lerna root.
+        if ((new LernaBuilder())->isAppropriate()) {
+            return false;
+        }
+
         $metadata = $this->release_metadata->all();
         return count($metadata) > 0 &&
             !(array_key_exists('site', $metadata) &&
@@ -406,12 +414,25 @@ class PrepareSiteCommand extends Command
         return $testing_url;
     }
 
+    protected function getWebScopes(): Array
+    {
+        $scopes = [];
+        foreach($this->release_metadata->all() as $package => $config) {
+            if($config['scope.is_web']) {
+                $scopes[] = $package;
+            }
+        }
+
+        return $scopes;
+    }
+
     protected function getBuilder(): BuilderInterface
     {
         // Order is important. First appropriate builder is used.
         $builders = [
             new LaravelBuilder(),
             new LegacyPHPBuilder(),
+            new LernaBuilder($this->getWebScopes()),
             new EmberBuilder(),
             new ReactBuilder(),
             new TypeScriptBuilder(),
