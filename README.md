@@ -67,7 +67,7 @@ title = "My Human-Readable Title"  ; Human-readable site title for messages
 
 [testing]
 url = "https://$hostname/testpath" ; URL to visit to perform manual testing
-command = "composer run test"      ; command to run automated tests 
+command = "composer run test"      ; command to run automated tests
 ```
 
 ### Variable Interpolation
@@ -78,6 +78,21 @@ The metadata file may use the following variables inside values:
  - **$branch** - the name of the current Git branch.
 
 Other variables will be ignored and used verbatim.
+
+### Lerna Monorepos
+
+For sites using a lerna monorepo setup, the `scope.is_web` setting is used to control
+which packages are built for a web deployment. Packages are built in the order they appear
+in the metadata file, for example:
+
+```
+[shared]
+scope.is_web = true
+
+[web]
+scope.is_web = true
+
+```
 
 Development
 -----------

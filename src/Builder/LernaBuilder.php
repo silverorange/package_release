@@ -27,10 +27,14 @@ class LernaBuilder extends BaseBuilder
 
     public function build(OutputInterface $output): bool
     {
-        return Npm::install($output)
-            && Lerna::verify($output)
-            && Lerna::bootstrap($output)
-            && Lerna::build($output, $this->scopes);
+        $result = Lerna::verify($output)
+            && Lerna::bootstrap($output, $this->scopes);
+
+        foreach($this->scopes as $scope) {
+            $result = $result && Lerna::build($output, $scope);
+        }
+
+        return $result;
     }
 
     public function getTitle(): string

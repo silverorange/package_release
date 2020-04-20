@@ -26,9 +26,12 @@ class Lerna
         ))->run();
     }
 
-    public static function bootstrap(OutputInterface $output): bool
+    public static function bootstrap(OutputInterface $output, Array $scopes): bool
     {
         $command = 'yarn lerna bootstrap';
+        foreach ($scopes as $scope) {
+            $command .= sprintf(' --scope=%s', $scope);
+        }
 
         return (new ProcessRunner(
             $output,
@@ -39,19 +42,16 @@ class Lerna
         ))->run();
     }
 
-    public static function build(OutputInterface $output, Array $scopes): bool
+    public static function build(OutputInterface $output, string $scope): bool
     {
-        $command = 'yarn lerna run build';
-        foreach ($scopes as $scope) {
-            $command .= sprintf(' --scope=%s', $scope);
-        }
+        $command = sprintf('yarn lerna run build --scope=%s', $scope);
 
         return (new ProcessRunner(
             $output,
             $command,
-            'building Lerna web packages',
-            'built Lerna web packages',
-            'failed to build Lerna web packages'
+            sprintf('building Lerna web package "%s"', $scope),
+            sprintf('built Lerna web package "%s"', $scope),
+            sprintf('failed to build Lerna web package "%s"', $scope)
         ))->run();
     }
 }
