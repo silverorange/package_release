@@ -105,7 +105,7 @@ You can run to tool using `./bin/package-release`.
 Deployment
 ----------
 To update tools used in staging after changes have been merged you first
-must release the package using `package-release` for a working dir in 
+must release the package using `package-release` from a working dir in 
 `/so/packages/package-release` -- then ansible should be run against
 staging servers using the composer_global tag. E.x.
 `ansible-playbook -l dev site.yml --tags composer_global`
