@@ -144,14 +144,14 @@ class PrepareSiteCommand extends Command
             return 1;
         }
 
-        // if (!$this->isMonoRepo() && !$this->isInLiveDirectory()) {
-        //     $output->writeln([
-        //         'You must be in the site’s <variable>live</variable> '
-        //         . 'directory to prepare a release.',
-        //         ''
-        //     ]);
-        //     return 1;
-        // }
+        if (!$this->isMonoRepo() && !$this->isInLiveDirectory()) {
+            $output->writeln([
+                'You must be in the site’s <variable>live</variable> '
+                . 'directory to prepare a release.',
+                ''
+            ]);
+            return 1;
+        }
 
         if ($this->isMonoRepo() && !$this->isInMonoRepoModule()) {
             $output->writeln([
