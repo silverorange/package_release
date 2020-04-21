@@ -13,22 +13,9 @@ use Silverorange\PackageRelease\Console\ProcessRunner;
  */
 class Lerna
 {
-    public static function verify(OutputInterface $output): bool
-    {
-        $command = 'yarn global add lerna';
-
-        return (new ProcessRunner(
-            $output,
-            $command,
-            'verifying Lerna installation',
-            'verified Lerna installation',
-            'failed to verify Lerna installation'
-        ))->run();
-    }
-
     public static function bootstrap(OutputInterface $output, Array $scopes): bool
     {
-        $command = 'yarn lerna bootstrap';
+        $command = 'lerna bootstrap';
         foreach ($scopes as $scope) {
             $command .= sprintf(' --scope=%s', $scope);
         }
@@ -44,7 +31,7 @@ class Lerna
 
     public static function build(OutputInterface $output, string $scope): bool
     {
-        $command = sprintf('yarn lerna run build --scope=%s', $scope);
+        $command = sprintf('lerna run build --scope=%s', $scope);
 
         return (new ProcessRunner(
             $output,

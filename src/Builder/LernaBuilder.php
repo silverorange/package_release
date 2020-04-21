@@ -27,8 +27,7 @@ class LernaBuilder extends BaseBuilder
 
     public function build(OutputInterface $output): bool
     {
-        $result = Lerna::verify($output)
-            && Lerna::bootstrap($output, $this->scopes);
+        $result = Lerna::bootstrap($output, $this->scopes);
 
         foreach($this->scopes as $scope) {
             $result = $result && Lerna::build($output, $scope);
