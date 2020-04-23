@@ -428,6 +428,9 @@ class PrepareSiteCommand extends Command
 
     protected function getLernaPackages(): Array
     {
+        if(!(new LernaBuilder())->isAppropriate()) {
+            return [];
+        }
         $module = $this->getMonoRepoModuleName();
         $module_metadata = $this->release_metadata->get($module);
         if(!is_array($module_metadata)) {
