@@ -50,6 +50,11 @@ class PrepareSiteCommand extends Command
      */
     protected $release_metadata = null;
 
+    /**
+     * @var string
+     */
+    protected $lernaPackage = null;
+
     public function __construct(
         ReleaseMetadata $metadata,
         Manager $manager,
@@ -106,6 +111,13 @@ class PrepareSiteCommand extends Command
                         . 'to pick the next release number.',
                         'minor'
                     ),
+                    new InputOption(
+                        'lerna-package',
+                        'l',
+                        InputOption::VALUE_REQUIRED,
+                        'Lerna package to release. Applicable only for lerna monorepos.',
+                        'web'
+                    ),
                 ))
             );
         ;
@@ -125,6 +137,8 @@ class PrepareSiteCommand extends Command
         );
 
         $this->style->execute($input, $output);
+
+        $this->lernaPackage = $input->getOption('lerna-package');
 
         if (!$this->manager->isInGitRepo()) {
             $output->writeln([
@@ -171,6 +185,7 @@ class PrepareSiteCommand extends Command
             $remote,
             $this->getMonoRepoModuleName()
         );
+
         if ($current_version === '0.0.0') {
             $output->writeln([
                 '<tip>No existing release. Next release will be first '
@@ -361,6 +376,10 @@ class PrepareSiteCommand extends Command
             return $module_name;
         }
 
+        if ((new LernaBuilder())->isAppropriate() && $this->lernaPackage !== null) {
+            return $this->lernaPackage;
+        }
+
         // Return empty string if we cannot determine the module we are in. In
         // that case, we are not in a monorepo.
         return '';
@@ -373,13 +392,6 @@ class PrepareSiteCommand extends Command
 
     protected function isMonoRepo(): bool
     {
-        // This monorepo handling is designed for a setup where each repo
-        // is independent and can be deployed independently, not for Lerna monorepos,
-        // which should be deployed from the lerna root.
-        if ((new LernaBuilder())->isAppropriate()) {
-            return false;
-        }
-
         $metadata = $this->release_metadata->all();
         return count($metadata) > 0 &&
             !(array_key_exists('site', $metadata) &&
@@ -414,16 +426,26 @@ class PrepareSiteCommand extends Command
         return $testing_url;
     }
 
-    protected function getWebScopes(): Array
+    protected function getLernaPackages(): Array
     {
-        $scopes = [];
-        foreach($this->release_metadata->all() as $package => $config) {
-            if($config['scope.is_web']) {
-                $scopes[] = $package;
-            }
+        if(!(new LernaBuilder())->isAppropriate()) {
+            return [];
         }
+        $module = $this->getMonoRepoModuleName();
+        $module_metadata = $this->release_metadata->get($module);
+        if(!is_array($module_metadata)) {
+          throw new \Exception(
+                'A release metadata file is required to build a Lerna project, ' .
+                'but no metadata could be found.' .
+                "\n" .
+                'Check that origin/master is up to date and pointing to the correct place.'
+            );
+        }
+        $packages = array_key_exists('build.prereqs', $module_metadata) ?
+            explode(',', $module_metadata['build.prereqs']) : [];
 
-        return $scopes;
+        $packages[] = $module;
+        return $packages;
     }
 
     protected function getBuilder(): BuilderInterface
@@ -432,7 +454,7 @@ class PrepareSiteCommand extends Command
         $builders = [
             new LaravelBuilder(),
             new LegacyPHPBuilder(),
-            new LernaBuilder($this->getWebScopes()),
+            new LernaBuilder($this->getLernaPackages()),
             new EmberBuilder(),
             new ReactBuilder(),
             new TypeScriptBuilder(),
