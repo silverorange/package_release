@@ -430,6 +430,14 @@ class PrepareSiteCommand extends Command
     {
         $module = $this->getMonoRepoModuleName();
         $module_metadata = $this->release_metadata->get($module);
+        if(!is_array($module_metadata)) {
+          throw new \Exception(
+                'A release metadata file is required to build a Lerna project, ' .
+                'but no metadata could be found.' .
+                "\n" .
+                'Check that origin/master is up to date and pointing to the correct place.'
+            );
+        }
         $packages = array_key_exists('build.prereqs', $module_metadata) ?
             explode(',', $module_metadata['build.prereqs']) : [];
 
