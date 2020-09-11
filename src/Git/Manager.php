@@ -398,11 +398,19 @@ class Manager
         return $next;
     }
 
+    /**
+     * Displays changes in the specified branch after the common ancestor of
+     * the branch and the specified tag
+     *
+     * @param string $remote the remote name.
+     * @param string $tag    the tag used on the left side of the diff.
+     * @param string $branch the branch used on the right side of the diff.
+     */
     public function showDiff(
         string $remote,
         string $tag,
         string $branch
-    ) {
+    ): void {
         $escaped_remote = escapeshellarg($remote);
         $escaped_tag = escapeshellarg($tag);
         $escaped_branch = escapeshellarg($branch);

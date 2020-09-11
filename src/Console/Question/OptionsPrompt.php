@@ -31,8 +31,8 @@ class OptionsPrompt
     }
 
     /**
-     * Asks a multiple-choice, waits for a response and returns one of the
-     * values
+     * Asks a multiple-choice question, waits for a response and returns one of
+     * the values
      *
      * @param string $prompt  The prompt text to use. This is displayed above
      *                        the input line.
