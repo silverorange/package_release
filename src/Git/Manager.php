@@ -398,6 +398,53 @@ class Manager
         return $next;
     }
 
+    public function showDiff(
+        string $remote,
+        string $tag,
+        string $branch
+    ) {
+        $escaped_remote = escapeshellarg($remote);
+        $escaped_tag = escapeshellarg($tag);
+        $escaped_branch = escapeshellarg($branch);
+
+        // Fetch only the tag from the remote.
+        $fetch_tag_command = sprintf(
+            'git fetch -q %1$s refs/tags/%2$s:refs/tags/%2$s 2>&1',
+            $escaped_remote,
+            $escaped_tag
+        );
+
+        $output = array();
+        $return = 0;
+        exec($fetch_tag_command, $output, $return);
+        if ($return === 0) {
+            // Fetch only the branch from the remote.
+            $fetch_branch_command = sprintf(
+                'git fetch -q %1$s %2$s:refs/remotes/%1$s/%2$s 2>&1',
+                $escaped_remote,
+                $escaped_branch
+            );
+
+            $output = array();
+            $return = 0;
+            exec($fetch_branch_command, $output, $return);
+
+            if ($return === 0) {
+                $diff_command = sprintf(
+                    "git diff %s...%s | colordiff",
+                    $escaped_tag,
+                    $escaped_branch
+                );
+
+                \passthru($diff_command);
+            } else {
+                $this->last_error = $output;
+            }
+        } else {
+            $this->last_error = $output;
+        }
+    }
+
     /**
      * Gets the content of a file from a remote branch
      *
