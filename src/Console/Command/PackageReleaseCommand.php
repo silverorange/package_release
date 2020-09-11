@@ -202,8 +202,6 @@ class PackageReleaseCommand extends Command
             && $type === 'interactive'
         ) {
             $branch = $input->getOption('branch');
-
-            print_r($current_version, $branch);
             $this->manager->showDiff($remote, $current_version, $branch);
 
             $prompt = new OptionsPrompt($this->getHelper('question'));
