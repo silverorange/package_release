@@ -439,8 +439,9 @@ class Manager
 
             if ($return === 0) {
                 $diff_command = sprintf(
-                    "git diff %s...%s | colordiff",
+                    "git diff %s...%s/%s | colordiff",
                     $escaped_tag,
+                    $escaped_remote,
                     $escaped_branch
                 );
 
