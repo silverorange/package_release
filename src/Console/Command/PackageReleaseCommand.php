@@ -197,51 +197,52 @@ class PackageReleaseCommand extends Command
         }
 
         $type = $input->getOption('type');
-        if ($input->isInteractive()
-            && !$output->isQuiet()
-            && $type === 'interactive'
-        ) {
-            $branch = $input->getOption('branch');
-            $this->manager->showDiff($remote, $current_version, $branch);
+        if ($type === 'interactive') {
+            if ($input->isInteractive()
+                && !$output->isQuiet()
+            ) {
+                $branch = $input->getOption('branch');
+                $this->manager->showDiff($remote, $current_version, $branch);
 
-            $prompt = new OptionsPrompt($this->getHelper('question'));
-            $type = $prompt->ask(
-                $input,
-                $output,
-                'Review the diff and choose an appropriate release type:',
-                [
-                    new OptionsPromptOption(
-                        'p',
-                        'patch',
-                        '<bold>[P]</bold>atch ... only bug fixes'
-                    ),
-                    new OptionsPromptOption(
-                        'm',
-                        'minor',
-                        '<bold>[M]</bold>inor ... new, backwards-compatible API or features'
-                    ),
-                    new OptionsPromptOption(
-                        'j',
-                        'major',
-                        'Ma<bold>[j]</bold>or ... backwards-incompatible API changes'
-                    ),
-                    new OptionsPromptOption(
-                        'c',
-                        'cancel',
-                        '<bold>[C]</bold>ancel'
-                    ),
-                ]
-            );
+                $prompt = new OptionsPrompt($this->getHelper('question'));
+                $type = $prompt->ask(
+                    $input,
+                    $output,
+                    'Review the diff and choose an appropriate release type:',
+                    [
+                        new OptionsPromptOption(
+                            'p',
+                            'patch',
+                            '<bold>[P]</bold>atch ... only bug fixes'
+                        ),
+                        new OptionsPromptOption(
+                            'm',
+                            'minor',
+                            '<bold>[M]</bold>inor ... new, '
+                            . 'backwards-compatible API or features'
+                        ),
+                        new OptionsPromptOption(
+                            'j',
+                            'major',
+                            'Ma<bold>[j]</bold>or ... '
+                            . 'backwards-incompatible API changes'
+                        ),
+                        new OptionsPromptOption(
+                            'c',
+                            'cancel',
+                            '<bold>[C]</bold>ancel'
+                        ),
+                    ]
+                );
 
-            if ($type === 'cancel') {
-                $output->writeln([
-                    '<bold>Got it. Not releasing.</bold>',
-                    ''
-                ]);
-                return 0;
-            }
-        } else {
-            if ($type === 'interactive') {
+                if ($type === 'cancel') {
+                    $output->writeln([
+                        '<bold>Got it. Not releasing.</bold>',
+                        ''
+                    ]);
+                    return 0;
+                }
+            } else {
                 $type = 'minor';
             }
         }
