@@ -243,6 +243,9 @@ class PackageReleaseCommand extends Command
                     return 0;
                 }
             } else {
+                // It's a non-interactive terminal, or quiet-mode was selected;
+                // and no release type was specified. Default to a minor
+                // release.
                 $type = 'minor';
             }
         }
