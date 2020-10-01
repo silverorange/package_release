@@ -25,9 +25,10 @@ class ConfirmationPrompt
         $this->setHelper($helper);
     }
 
-    public function setHelper(QuestionHelper $helper)
+    public function setHelper(QuestionHelper $helper): self
     {
         $this->helper = $helper;
+        return $this;
     }
 
     /**

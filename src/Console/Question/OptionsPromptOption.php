@@ -27,9 +27,10 @@ class OptionsPromptOption
 
     public function __construct(string $key, string $value, string $prompt)
     {
-        $this->setKey($key);
-        $this->setValue($value);
-        $this->setPrompt($prompt);
+        $this
+            ->setKey($key)
+            ->setValue($value)
+            ->setPrompt($prompt);
     }
 
     public function setKey(string $key): self
