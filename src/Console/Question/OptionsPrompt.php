@@ -10,10 +10,10 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2017-2018 silverorange
+ * @copyright 2020 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
-class ConfirmationPrompt
+class OptionsPrompt
 {
     /**
      * @var Symfony\Component\Console\Helper\QuestionHelper
@@ -32,41 +32,48 @@ class ConfirmationPrompt
     }
 
     /**
-     * Asks a yes or no question, waits for a response and returns a boolean
+     * Asks a multiple-choice question, waits for a response and returns one of
+     * the values
      *
-     * @param string $line1 optional. The prompt text to use. If $line2 is
-     *                      specified, this is displayed above the input line.
-     *                      If not specified, 'Yes or no? ' is used.
-     * @param string $line2 optional. The prompt text to use. $line1 is
-     *                      displayed above the input and this line is displayed
-     *                      before the input. If not specified, $line1 is
-     *                      displayed before the input.
+     * @param string $prompt  The prompt text to use. This is displayed above
+     *                        the input line.
+     * @param array  $options an array of
+     *                        {@link Silverorange\PackageRelease\Console\Question\OptionPromptOption}
+     *                        objects.
      *
-     * @return boolean true if the user entered yes, otherwise false.
+     * @return string the selected option value.
      */
     public function ask(
         InputInterface $input,
         OutputInterface $output,
-        string $message
-    ): bool {
+        string $prompt,
+        array $options
+    ): string {
         $answered = false;
 
         $output->writeln('');
         $question = new Question('<prompt>></prompt> ', null);
 
         while (!$answered) {
-            $output->writeln($message);
-            $response = $this->helper->ask($input, $output, $question);
-            if (preg_match('/^y|yes$/i', $response) === 1) {
-                $response = true;
-                $answered = true;
-            } elseif (preg_match('/^n|no$/i', $response) === 1) {
-                $response = false;
-                $answered = true;
+            $output->writeln($prompt);
+            $output->writeln('');
+            foreach ($options as $option) {
+                $output->writeln($option->getPrompt());
             }
+            $output->writeln('');
+            $response = $this->helper->ask($input, $output, $question);
+
+            foreach ($options as $option) {
+                if ($option->matches($response)) {
+                    $value = $option->getValue();
+                    $answered = true;
+                    break 2;
+                }
+            }
+
             $output->writeln('');
         }
 
-        return $response;
+        return $value;
     }
 }

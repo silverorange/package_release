@@ -14,10 +14,14 @@ use Silverorange\PackageRelease\Tool\Lerna;
  */
 class LernaBuilder extends BaseBuilder
 {
+    /**
+     * @var string[]
+     */
     protected $scopes;
 
-    function __construct(Array $scopes=[]) {
-       $this->scopes = $scopes;
+    public function __construct(array $scopes = [])
+    {
+        $this->scopes = $scopes;
     }
 
     public function isAppropriate(): bool
@@ -29,7 +33,7 @@ class LernaBuilder extends BaseBuilder
     {
         $result = Lerna::bootstrap($output, $this->scopes);
 
-        foreach($this->scopes as $scope) {
+        foreach ($this->scopes as $scope) {
             $result = $result && Lerna::build($output, $scope);
         }
 

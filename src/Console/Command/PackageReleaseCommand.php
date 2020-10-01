@@ -16,6 +16,8 @@ use Silverorange\PackageRelease\Console\Formatter\Style;
 use Silverorange\PackageRelease\Console\Formatter\LineWrapper;
 use Silverorange\PackageRelease\Console\Formatter\OutputFormatter as PackageReleaseOutputFormatter;
 use Silverorange\PackageRelease\Console\Question\ConfirmationPrompt;
+use Silverorange\PackageRelease\Console\Question\OptionsPrompt;
+use Silverorange\PackageRelease\Console\Question\OptionsPromptOption;
 
 /**
  * @package   PackageRelease
@@ -91,8 +93,10 @@ class PackageReleaseCommand extends Command
                         InputOption::VALUE_REQUIRED,
                         'Release type. Must be one of "major", "minor", or '
                         . '"patch". Semver 2.0 (https://semver.org/) is used '
-                        . 'to pick the next release number.',
-                        'minor'
+                        . 'to pick the next release number. If not specified, '
+                        . 'a diff is displayed and this tool prompts for the '
+                        . 'appropriate release type.',
+                        'interactive'
                     ),
                 ))
             );
@@ -192,9 +196,63 @@ class PackageReleaseCommand extends Command
             ]);
         }
 
+        $type = $input->getOption('type');
+        if ($type === 'interactive') {
+            if ($input->isInteractive()
+                && !$output->isQuiet()
+            ) {
+                $branch = $input->getOption('branch');
+                $this->manager->showDiff($remote, $current_version, $branch);
+
+                $prompt = new OptionsPrompt($this->getHelper('question'));
+                $type = $prompt->ask(
+                    $input,
+                    $output,
+                    'Review the diff and choose an appropriate release type:',
+                    [
+                        new OptionsPromptOption(
+                            'p',
+                            'patch',
+                            '<bold>[P]</bold>atch ... only bug fixes'
+                        ),
+                        new OptionsPromptOption(
+                            'm',
+                            'minor',
+                            '<bold>[M]</bold>inor ... new, '
+                            . 'backwards-compatible API or features'
+                        ),
+                        new OptionsPromptOption(
+                            'j',
+                            'major',
+                            'Ma<bold>[j]</bold>or ... '
+                            . 'backwards-incompatible API changes'
+                        ),
+                        new OptionsPromptOption(
+                            'c',
+                            'cancel',
+                            '<bold>[C]</bold>ancel'
+                        ),
+                    ]
+                );
+
+                if ($type === 'cancel') {
+                    $output->writeln([
+                        '<bold>Got it. Not releasing.</bold>',
+                        ''
+                    ]);
+                    return 0;
+                }
+            } else {
+                // It's a non-interactive terminal, or quiet-mode was selected;
+                // and no release type was specified. Default to a minor
+                // release.
+                $type = 'minor';
+            }
+        }
+
         $next_version = $this->manager->getNextVersion(
             $current_version,
-            $input->getOption('type')
+            $type
         );
 
         // Prompt to continue release.
@@ -205,8 +263,8 @@ class PackageReleaseCommand extends Command
                 $output,
                 sprintf(
                     'Ready to release new %s version <variable>%s</variable>. '
-                    . 'Continue? <prompt>[Y/N]</prompt>',
-                    $input->getOption('type'),
+                    . 'Continue? <bold>[Y/N]</bold>',
+                    OutputFormatter::escape($type),
                     OutputFormatter::escape($next_version)
                 )
             );
@@ -351,7 +409,7 @@ class PackageReleaseCommand extends Command
     ): void {
         $type = $input->getOption('type');
 
-        if (!in_array($type, ['major', 'minor', 'patch', 'micro'])) {
+        if (!in_array($type, ['major', 'minor', 'patch', 'micro', 'interactive'])) {
             throw new InvalidOptionException(
                 sprintf(
                     'Option "type" must be one of the following: "major", '

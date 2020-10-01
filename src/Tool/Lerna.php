@@ -13,11 +13,14 @@ use Silverorange\PackageRelease\Console\ProcessRunner;
  */
 class Lerna
 {
-    public static function bootstrap(OutputInterface $output, Array $scopes): bool
-    {
+    public static function bootstrap(
+        OutputInterface $output,
+        array $scopes
+    ): bool {
         $command = 'lerna bootstrap';
+
         foreach ($scopes as $scope) {
-            $command .= sprintf(' --scope=%s', $scope);
+            $command .= sprintf(' --scope=%s', \escapeshellarg($scope));
         }
 
         return (new ProcessRunner(
@@ -31,14 +34,20 @@ class Lerna
 
     public static function build(OutputInterface $output, string $scope): bool
     {
-        $command = sprintf('lerna run build --scope=%s', $scope);
+        $command = sprintf(
+            'lerna run build --scope=%s',
+            \escapeshellarg($scope)
+        );
 
         return (new ProcessRunner(
             $output,
             $command,
-            sprintf('building Lerna web package "%s"', $scope),
-            sprintf('built Lerna web package "%s"', $scope),
-            sprintf('failed to build Lerna web package "%s"', $scope)
+            sprintf('building Lerna package <variable>%s</variable>', $scope),
+            sprintf('built Lerna package <variable>%s</variable>', $scope),
+            sprintf(
+                'failed to build Lerna package <variable>%s</variable>',
+                $scope
+            )
         ))->run();
     }
 }
