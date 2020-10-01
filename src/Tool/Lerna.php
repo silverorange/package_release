@@ -13,11 +13,13 @@ use Silverorange\PackageRelease\Console\ProcessRunner;
  */
 class Lerna
 {
-    public static function bootstrap(OutputInterface $output, Array $scopes): bool
-    {
+    public static function bootstrap(
+        OutputInterface $output,
+        array $scopes
+    ): bool {
         $command = 'lerna bootstrap';
         foreach ($scopes as $scope) {
-            $command .= sprintf(' --scope=%s', $scope);
+            $command .= sprintf(' --scope=%s', \escapeshellarg($scope));
         }
 
         return (new ProcessRunner(
