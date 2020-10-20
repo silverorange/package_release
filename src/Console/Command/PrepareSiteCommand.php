@@ -22,6 +22,7 @@ use Silverorange\PackageRelease\Builder\EmberBuilder;
 use Silverorange\PackageRelease\Builder\LaravelBuilder;
 use Silverorange\PackageRelease\Builder\LegacyPHPBuilder;
 use Silverorange\PackageRelease\Builder\LernaBuilder;
+use Silverorange\PackageRelease\Builder\NextBuilder;
 use Silverorange\PackageRelease\Builder\NodeBuilder;
 use Silverorange\PackageRelease\Builder\ReactBuilder;
 use Silverorange\PackageRelease\Builder\StaticBuilder;
@@ -459,6 +460,7 @@ class PrepareSiteCommand extends Command
             new LegacyPHPBuilder(),
             new LernaBuilder($this->getLernaPackages()),
             new EmberBuilder(),
+            new NextBuilder(),
             new ReactBuilder(),
             new TypeScriptBuilder(),
             new NodeBuilder(),
