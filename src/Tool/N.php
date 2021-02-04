@@ -45,7 +45,7 @@ class N
     public function isAppropriate(): bool
     {
         if (self::$isAppropriate === null) {
-            if ($this->hasFile('package.json')) {
+            if (self::hasFile('package.json')) {
                 $json = json_decode(file_get_contents('package.json'), true);
                 self::$isAppropriate =  (
                     isset($json['engines']) && isset($json['engines']['node'])
