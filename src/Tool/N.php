@@ -29,6 +29,8 @@ class N
 
             self::$isDownloaded = true;
         }
+
+        return true;
     }
 
     public static function getPrefix(OutputInterface $output): string
