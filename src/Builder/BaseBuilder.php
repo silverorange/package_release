@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class BaseBuilder implements BuilderInterface
 {
-    protected function hasFile($filename)
+    protected function hasFile(string $filename): bool
     {
         return (file_exists($filename) && is_readable($filename));
     }
