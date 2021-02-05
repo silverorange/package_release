@@ -19,18 +19,16 @@ class N
     public static function download(OutputInterface $output): bool
     {
         if (self::isAppropriate() && !self::$isDownloaded) {
-            return (new ProcessRunner(
+            self::$isDownloaded = (new ProcessRunner(
                 $output,
                 'n --download engine',
                 'downloading required node version',
                 'downloaded required node version',
                 'failed to download required node version'
             ))->run();
-
-            self::$isDownloaded = true;
         }
 
-        return true;
+        return self::$isDownloaded;
     }
 
     public static function getPrefix(OutputInterface $output): string
