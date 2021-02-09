@@ -47,7 +47,7 @@ class N
         if (self::$isAppropriate === null) {
             if (self::hasFile('package.json')) {
                 $json = json_decode(file_get_contents('package.json'), true);
-                self::$isAppropriate =  (
+                self::$isAppropriate = (
                     isset($json['engines']) && isset($json['engines']['node'])
                 );
             } else {
