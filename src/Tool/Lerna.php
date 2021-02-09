@@ -8,7 +8,7 @@ use Silverorange\PackageRelease\Console\ProcessRunner;
 /**
  * @package   PackageRelease
  * @author    Meg Mitchell <meg@silverorange.com>
- * @copyright 2020 silverorange
+ * @copyright 2020-2021 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class Lerna
@@ -17,6 +17,8 @@ class Lerna
         OutputInterface $output,
         array $scopes
     ): bool {
+        $prefix = N::getPrefix($output);
+
         $command = 'lerna bootstrap';
 
         foreach ($scopes as $scope) {
@@ -25,7 +27,7 @@ class Lerna
 
         return (new ProcessRunner(
             $output,
-            $command,
+            $prefix . $command,
             'bootstrapping Lerna repository',
             'bootstrapped Lerna repository',
             'failed to bootstrap Lerna repository'
@@ -34,6 +36,8 @@ class Lerna
 
     public static function build(OutputInterface $output, string $scope): bool
     {
+        $prefix = N::getPrefix($output);
+
         $command = sprintf(
             'lerna run build --scope=%s',
             \escapeshellarg($scope)
@@ -41,7 +45,7 @@ class Lerna
 
         return (new ProcessRunner(
             $output,
-            $command,
+            $prefix . $command,
             sprintf('building Lerna package <variable>%s</variable>', $scope),
             sprintf('built Lerna package <variable>%s</variable>', $scope),
             sprintf(
