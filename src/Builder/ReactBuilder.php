@@ -4,6 +4,7 @@ namespace Silverorange\PackageRelease\Builder;
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Silverorange\PackageRelease\Tool\Npm;
+use Silverorange\PackageRelease\Tool\PackageJson;
 
 /**
  * @package   PackageRelease
@@ -15,16 +16,10 @@ class ReactBuilder extends BaseBuilder
 {
     public function isAppropriate(): bool
     {
-        if ($this->hasFile('package.json')) {
-            $json = json_decode(file_get_contents('package.json'), true);
-            return (
-                isset($json['dependencies']) && isset($json['dependencies']['react-scripts'])
-            ) || (
-                isset($json['devDependencies']) && isset($json['devDependencies']['react-scripts'])
-            );
-        }
-
-        return false;
+        return (
+            PackageJson::hasDependency('react-scripts') ||
+            PackageJson::hasDevDependency('react-scripts')
+        );
     }
 
     public function build(OutputInterface $output): bool

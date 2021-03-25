@@ -4,6 +4,7 @@ namespace Silverorange\PackageRelease\Builder;
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Silverorange\PackageRelease\Tool\Npm;
+use Silverorange\PackageRelease\Tool\PackageJson;
 
 /**
  * @package   PackageRelease
@@ -15,16 +16,10 @@ class TypeScriptBuilder extends BaseBuilder
 {
     public function isAppropriate(): bool
     {
-        if ($this->hasFile('package.json')) {
-            $json = json_decode(file_get_contents('package.json'), true);
-            return (
-                isset($json['dependencies']) && isset($json['dependencies']['typescript'])
-            ) || (
-                isset($json['devDependencies']) && isset($json['devDependencies']['typescript'])
-            );
-        }
-
-        return false;
+        return (
+            PackageJson::hasDependency('typescript') ||
+            PackageJson::hasDevDependency('typescript')
+        );
     }
 
     public function build(OutputInterface $output): bool
