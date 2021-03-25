@@ -17,15 +17,15 @@ class LegacyPHPBuilder extends BaseBuilder
     public function isAppropriate(): bool
     {
         $has_composer_json = $this->hasFile('composer.json');
-        $node_14_15_1 = false;
+        $node_14 = false;
         if ($this->hasFile('package.json')) {
             $json = json_decode(file_get_contents('package.json'));
             if (property_exists($json, 'engines') && property_exists($json->engines, 'node')) {
-                $node_14_15_1 =  version_compare($json->engines->node, "14.15.1", ">=");
+                $node_14 =  version_compare($json->engines->node, "14.0.0", ">=");
             }
         }
         
-        return $has_composer_json && !$node_14_15_1;
+        return $has_composer_json && !$node_14;
     }
 
     public function build(OutputInterface $output): bool
