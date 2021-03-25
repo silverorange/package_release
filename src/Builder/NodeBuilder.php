@@ -4,6 +4,7 @@ namespace Silverorange\PackageRelease\Builder;
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Silverorange\PackageRelease\Tool\Npm;
+use Silverorange\PackageRelease\Tool\PackageJson;
 
 /**
  * @package   PackageRelease
@@ -15,7 +16,7 @@ class NodeBuilder extends BaseBuilder
 {
     public function isAppropriate(): bool
     {
-        return $this->hasFile('package.json');
+        return PackageJson::hasPackageJson();
     }
 
     public function build(OutputInterface $output): bool

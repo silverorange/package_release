@@ -42,23 +42,16 @@ class N
         return '';
     }
 
-    public function isAppropriate(): bool
+    public static function isAppropriate(): bool
     {
         if (self::$isAppropriate === null) {
-            if (self::hasFile('package.json')) {
-                $json = json_decode(file_get_contents('package.json'), true);
-                self::$isAppropriate = (
-                    isset($json['engines']) && isset($json['engines']['node'])
-                );
-            } else {
-                self::$isAppropriate = false;
-            }
+            self::$isAppropriate = PackageJson::hasEngine('node');
         }
 
         return self::$isAppropriate;
     }
 
-    protected function hasFile(string $filename): bool
+    protected static function hasFile(string $filename): bool
     {
         return (file_exists($filename) && is_readable($filename));
     }
