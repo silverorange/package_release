@@ -25,7 +25,7 @@ class EmberBuilder extends BaseBuilder
         $hasBower = $this->hasFile('bower.json');
 
         return Npm::install($output)
-            && ($hasBower || Bower::install($output))
+            && (!$hasBower || Bower::install($output))
             && Ember::build($output);
     }
 
