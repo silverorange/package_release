@@ -14,29 +14,11 @@ use Silverorange\PackageRelease\Console\ProcessRunner;
 class N
 {
     private static $isAppropriate = null;
-    private static $isDownloaded = false;
-
-    public static function download(OutputInterface $output): bool
-    {
-        if (self::isAppropriate() && !self::$isDownloaded) {
-            self::$isDownloaded = (new ProcessRunner(
-                $output,
-                'n --download engine',
-                'downloading required node version',
-                'downloaded required node version',
-                'failed to download required node version'
-            ))->run();
-        }
-
-        return self::$isDownloaded;
-    }
 
     public static function getPrefix(OutputInterface $output): string
     {
-        self::download($output);
-
         if (self::isAppropriate()) {
-            return 'n exec engine ';
+            return 'n --download exec engine ';
         }
 
         return '';
