@@ -172,7 +172,7 @@ class PackageReleaseCommand extends Command
                 sprintf(
                     'Could not find a valid remote. A remote from one of the '.
                     'following GitHub organizations must exist: %s.',
-                    implode($formatted_orgs, ', ')
+                    implode(', ', $formatted_orgs)
                 ),
                 ''
             ]);
