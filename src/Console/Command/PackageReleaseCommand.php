@@ -208,7 +208,9 @@ class PackageReleaseCommand extends Command
                 $type = $prompt->ask(
                     $input,
                     $output,
-                    'Review the diff and choose an appropriate release type:',
+                    'Review the diff and choose an appropriate release type. '
+                    . '<tip>Yes, you can safely do a patch release for '
+                    . 'packages!</tip>:',
                     [
                         new OptionsPromptOption(
                             'p',
