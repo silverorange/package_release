@@ -107,16 +107,17 @@ class PrepareSiteCommand extends Command
                         'type',
                         't',
                         InputOption::VALUE_REQUIRED,
-                        'Release type. Must be one of "major", "minor", or '
-                        . '"patch". Semver 2.0 (https://semver.org/) is used '
-                        . 'to pick the next release number.',
+                        'Release type. Must be one of "major", or "minor". '
+                        . 'Semver 2.0 (https://semver.org/) is used to pick '
+                        . 'the next release number.',
                         'minor'
                     ),
                     new InputOption(
                         'lerna-package',
                         'l',
                         InputOption::VALUE_REQUIRED,
-                        'Lerna package to release. Applicable only for lerna monorepos.',
+                        'Lerna package to release. Applicable only for lerna '
+                        . 'monorepos.',
                         'web'
                     ),
                 ))
@@ -200,6 +201,14 @@ class PrepareSiteCommand extends Command
             $type = 'patch';
         }
 
+        if ($type === 'patch') {
+            $output->writeln([
+                '<header>Patch releases are not currently supported.</header> '
+                . 'Please use "major" or "minor".',
+            ]);
+            return 1;
+        }
+
         $next_version = $this->manager->getNextVersion(
             $current_version,
             $type
@@ -215,13 +224,13 @@ class PrepareSiteCommand extends Command
             '',
         ]);
 
-        $branch = ($type === 'patch') ? 'live' : 'master';
+        $branch = 'master';
         $this->startCommand($output);
         $release_branch = $this->manager->createReleaseBranch(
             $branch,
             $remote,
             $next_version,
-            ($type === 'patch') ? 'patch' : 'release'
+            'release'
         );
         if ($release_branch === null) {
             $this->handleError(
@@ -265,22 +274,7 @@ class PrepareSiteCommand extends Command
                 '',
             ]);
 
-            if ($input->getOption('type') === 'patch') {
-                $output->writeln(
-                    'This is a patch release. Make and commit any required '
-                    . 'changes to this branch before testing.'
-                );
-
-                if ($this->getTestingURL() !== '') {
-                    $output->writeln('');
-                    $output->write(
-                        sprintf(
-                            'The site can be tested at <link>%s</link>. ',
-                            OutputFormatter::escape($this->getTestingURL())
-                        )
-                    );
-                }
-            } elseif ($this->getTestingURL() !== '') {
+            if ($this->getTestingURL() !== '') {
                 $output->write(
                     sprintf(
                         'The site is ready to test at <link>%s</link>. ',
