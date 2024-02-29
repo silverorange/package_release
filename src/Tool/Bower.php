@@ -17,6 +17,10 @@ class Bower
 
     public static function install(OutputInterface $output): bool
     {
+        if (!self::isAppropriate()) {
+            return true;
+        }
+
         $prefix = N::getPrefix($output);
 
         return (new ProcessRunner(

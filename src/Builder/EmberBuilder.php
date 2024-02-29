@@ -23,11 +23,9 @@ class EmberBuilder extends BaseBuilder
 
     public function build(OutputInterface $output): bool
     {
-        $hasBower = $this->hasFile('bower.json');
-
         return Corepack::enable($output)
             && Npm::install($output)
-            && (!$hasBower || Bower::install($output))
+            && Bower::install($output)
             && Ember::build($output);
     }
 
