@@ -8,7 +8,7 @@ use Silverorange\PackageRelease\Console\ProcessRunner;
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2018-2021 silverorange
+ * @copyright 2018-2024 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class Npm
@@ -17,9 +17,11 @@ class Npm
     {
         $prefix = N::getPrefix($output);
 
-        $command = (static::isYarn())
-            ? 'yarn install --silent'
-            : 'npm install --no-package-lock --quiet';
+        $command = match(true) {
+            (static::isPnpm()) => 'pnpm install --silent',
+            (static::isYarn()) => 'yarn install --silent',
+            default => 'npm install --no-package-lock --quiet',
+        };
 
         return (new ProcessRunner(
             $output,
@@ -37,9 +39,11 @@ class Npm
         $prefix = N::getPrefix($output);
 
         // Note: Flags are not escaped so that multiple flags can be passed.
-        $command = (static::isYarn())
-            ? 'yarn build ' . $flags
-            : 'npm build ' . $flags;
+        $command = match(true) {
+            (static::isPnpm()) => 'pnpm build ' . $flags,
+            (static::isYarn()) => 'yarn build ' . $flags,
+            default => 'npm build ' . $flags,
+        };
 
         return (new ProcessRunner(
             $output,
@@ -53,6 +57,16 @@ class Npm
 
     protected static function isYarn(): bool
     {
-        return file_exists('yarn.lock');
+        return self::hasFile('yarn.lock');
+    }
+
+    protected static function isPnpm(): bool
+    {
+        return self::hasFile('pnpm-lock.yaml');
+    }
+
+    protected static function hasFile(string $filename): bool
+    {
+        return (file_exists($filename) && is_readable($filename));
     }
 }

@@ -3,13 +3,14 @@
 namespace Silverorange\PackageRelease\Builder;
 
 use Symfony\Component\Console\Output\OutputInterface;
+use Silverorange\PackageRelease\Tool\Corepack;
 use Silverorange\PackageRelease\Tool\Npm;
 use Silverorange\PackageRelease\Tool\PackageJson;
 
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2018 silverorange
+ * @copyright 2018-2024 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class NodeBuilder extends BaseBuilder
@@ -21,7 +22,8 @@ class NodeBuilder extends BaseBuilder
 
     public function build(OutputInterface $output): bool
     {
-        return Npm::install($output);
+        return Corepack::enable($output)
+            && Npm::install($output);
     }
 
     public function getTitle(): string

@@ -8,7 +8,7 @@ use Silverorange\PackageRelease\Console\ProcessRunner;
 /**
  * @package   PackageRelease
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2021 silverorange
+ * @copyright 2021-2024 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  */
 class PackageJson
@@ -49,6 +49,15 @@ class PackageJson
         return (
             isset($json['engines']) &&
             isset($json['engines'][$engine])
+        );
+    }
+
+    public static function hasPackageManager(): bool
+    {
+        $json = self::getJsonContent();
+
+        return (
+            isset($json['hasPackageManager'])
         );
     }
 
