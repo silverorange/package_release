@@ -57,7 +57,7 @@ class PackageJson
         $json = self::getJsonContent();
 
         return (
-            isset($json['hasPackageManager'])
+            isset($json['packageManager'])
         );
     }
 
