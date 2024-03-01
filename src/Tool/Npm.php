@@ -17,7 +17,7 @@ class Npm
     {
         $prefix = N::getPrefix($output);
 
-        $command = match(true) {
+        $command = match (true) {
             (static::isPnpm()) => 'pnpm install --silent',
             (static::isYarn()) => 'yarn install --silent',
             default => 'npm install --no-package-lock --quiet',
@@ -39,7 +39,7 @@ class Npm
         $prefix = N::getPrefix($output);
 
         // Note: Flags are not escaped so that multiple flags can be passed.
-        $command = match(true) {
+        $command = match (true) {
             (static::isPnpm()) => 'pnpm build ' . $flags,
             (static::isYarn()) => 'yarn build ' . $flags,
             default => 'npm build ' . $flags,
