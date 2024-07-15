@@ -52,7 +52,26 @@ class Npm
             'built project',
             'failed to build project'
         ))->run();
-        static::start($output, 'building project');
+    }
+
+    public static function run(OutputInterface $output, string $script): bool
+    {
+        $prefix = N::getPrefix($output);
+
+        // Note: script is not escaped so that args can be passed.
+        $command = match (true) {
+            (static::isPnpm()) => 'pnpm run ' . $script,
+            (static::isYarn()) => 'yarn run ' . $script,
+            default => 'npm run ' . $script,
+        };
+
+        return (new ProcessRunner(
+            $output,
+            $prefix . $command,
+            'running script "' . $script . '"',
+            'ran script "' . $script . '"',
+            'failed to run script "' . $script . '"'
+        ))->run();
     }
 
     protected static function isYarn(): bool
